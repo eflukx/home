@@ -41,3 +41,16 @@ SMA spot installation instructions
 	sudo SMAspot -cfg/etc/SMAspot.cfg -finq -sp0
 
 if things go as expected, there should be a couple of log files containing the measurement data.
+
+Service installation
+--------------------
+
+* copy the SMAspot.conf file to the service folder
+
+	sudo cp SMAspot/SMAspot.conf /etc/init
+
+* start the service
+
+	sudo service SMAspot start
+
+The service will also start on reboot. Please note that [Upstart](http://upstart.ubuntu.com/) is required for these scripts.
