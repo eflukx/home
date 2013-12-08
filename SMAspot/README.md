@@ -1,4 +1,4 @@
-SMA spot installation instructions
+SMAspot installation instructions
 =================
 
 These are step-by-step-ish instructions on how to copile, configure & install a daemonize version of the SMAspot Bluetooth reader. 
