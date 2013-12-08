@@ -27,17 +27,21 @@ connection:
 
 	2 - request (RTS)
 	3 - ground (GND)
-	4 -	N.C. (N.C.)
-	5 -	data (RxD)
+	4 - N.C. (N.C.)
+	5 - data (RxD)
+	
+For more informatio see this article on [gejanssen.com](http://gejanssen.com/howto/Slimme-meter-uitlezen/index.html)
 
 Required Software
 ----
 
-* python
-* pyserial
+1. python
+2. pyserial
+
 	> sudo pip install pyserial
-* [ft232r_prog](http://rtr.ca/ft232r/)	
-* Debian/Ubuntu for the Daemon config
+
+3. [ft232r_prog](http://rtr.ca/ft232r/)	
+4. Debian/Ubuntu for the Daemon config
 
 Installation
 ----
