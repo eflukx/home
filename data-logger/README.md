@@ -91,4 +91,4 @@ to start the monitoring type
 
 	sudo service data-logger start
 
-The service will also start on reboot
+The service will also start on reboot. Please note that [Upstart](http://upstart.ubuntu.com/) is required for these scripts.
