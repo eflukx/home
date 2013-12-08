@@ -1,55 +1,65 @@
-SMA spot installation instructions
+SMAspot installation instructions
 =================
 
-* Ddwnload the library from the [SMA spot site](https://code.google.com/p/sma-spot/downloads/list)
-* extract the files
-* install the needed libraries
+These are step-by-step-ish instructions on how to copile, configure & install a daemonize version of the SMAspot Bluetooth reader. 
+
+prerequisites
+---
+
+install the required dependencies
 
 	sudo apt-get install --no-install-recommends bluetooth libbluetooth-dev libcurl4-openssl-dev
 
-* create the storage folder
+Next, download the code from the [SMA spot site](https://code.google.com/p/sma-spot/downloads/list) site and extract the files.
 
-	sudo mkdir -p /var/local/smaspot
-
-* to build SMA spot type
+To build SMAspot type
 
 	make
 
-* install the results of the build by executing
+Install the output of the build by executing:
 
-	sudo chmod +x bin/Release/SMAspot
+	chmod +x bin/Release/SMAspot
 	sudo cp bin/Release/SMAspot /usr/local/bin/
 
-* locate the inverters address using `hcitool`
+Configuration
+-----
+
+To locate the address of the SMA converter execute
 
 	hcitool scan
 
-* edit the SMAspot.cfg 
+copy the bluethooth address (that the xxxxxxx:yyyyyyyyy one) to your clipboard and create the output folder for the data files;
 
-	vim SMAspot.cfg
+	sudo mkdir -p /var/local/smaspot
 
-* insert the address found with the previous scan command
+open the `SMAspot.cfg` file (from the source diretory) in an editor and make the following changes 
+
+* insert the address found with the scan command above
 * change the plant name to something usefull
 * alter the storage path to `/var/local/smaspot`
-* visit [this location picker](http://itouchmap.com/latlong.html) and pick the latitude/longitude from your location
-* copy the config file to `/etc`
+* visit [this location picker](http://itouchmap.com/latlong.html) and pick the latitude/longitude for your location
+
+Once these changes have been made, the config file can be copied to the `etc` folder.
 
 	sudo cp SMAspot.cfg /etc/
 
-* to see if the connection can be established and that everything works as expected, execute
+Validation 
+----------
+
+To validate if the connection can be established and that everything works as expected, execute
 
 	sudo SMAspot -cfg/etc/SMAspot.cfg -finq -sp0
 
-if things go as expected, there should be a couple of log files containing the measurement data.
+if things go as expected, there should be a couple of log files in `/var/local/smaspot` containing the measurement data.
 
 Service installation
 --------------------
 
-* copy the SMAspot.conf file to the service folder
+Copy the `SMAspot.conf` file to the service folder
 
 	sudo cp SMAspot/SMAspot.conf /etc/init
 
-* start the service
+start the service by executing
 
 	sudo service SMAspot start
 
