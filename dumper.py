@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+#
+# Dutch Smart Meter telegram dump script.
+# 
+# This script reads a telegram from an Iskra Smart Meter
+# and writes it to a time-stamped file for future processing.
+#
+
 import sys
 import serial
 import time
@@ -7,6 +14,7 @@ import os
 
 serialDevice = "/dev/tty.usbserial-A602N2BW"
 outputFolder = "/tmp"
+threshold 	 = 35	# capture evey 35-th message (+/- 5 minutes @ 6 messages per minute)  
 
 def initSerialPort():
 
@@ -21,9 +29,9 @@ def initSerialPort():
 	serialPort.port 	= serialDevice
 
 	try:
-	    serialPort.open()
+		serialPort.open()
 	except:
-	    sys.exit ("Error opening %s."  % serialDevice)      
+		sys.exit ("Error opening %s."  % serialDevice)      
 
 	return serialPort
 
@@ -35,7 +43,7 @@ def readTelegram(serialPort):
 	line = ''
 	while True:
 		
-	    try:
+		try:
 			line = str(serialPort.readline()).strip()
 
 			if line.startswith('/'):
@@ -47,15 +55,13 @@ def readTelegram(serialPort):
 			if reading_telegram:
 				telegram.append(line)
 
-	    except:
-		    sys.exit ("Error reading %s."  % serialDevice)      
+		except:
+			sys.exit ("Error reading %s."  % serialDevice)      
 
 def dumpTelegram(telegram):
 
 	timestamp = time.strftime("%Y%m%d-%H%M%S")
 	outputFile = os.path.join(outputFolder, timestamp + ".txt")
-
-	print "write to %s" % outputFile
 
 	with open(outputFile, "w") as text_file:
 		text_file.write(telegram)
@@ -66,17 +72,14 @@ print ("chakra - P1 dumper v%s" % version)
 
 serialPort = initSerialPort()
 
-threshold = 0
+counter = 0
 
 while True:
 	telegram = readTelegram(serialPort)
-	threshold = threshold + 1
+	counter = counter + 1
 
-	print "got data %s" % threshold
-
-	if threshold == 2:
-		threshold = 0
-
+	if counter == threshold:
+		counter = 0
 		data = "\n".join(telegram)
 		dumpTelegram(data)
 
