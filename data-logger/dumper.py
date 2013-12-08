@@ -12,8 +12,8 @@ import serial
 import time
 import os
 
-serialDevice = "/dev/tty.usbserial-A602N2BW"
-outputFolder = "/tmp"
+serialDevice = "/dev/ttyUSB0"
+outputFolder = "/var/local/data-logger"
 threshold    = 35 # capture evey 35-th message (+/- 5 minutes @ 6 messages per minute)  
 
 def initSerialPort():
