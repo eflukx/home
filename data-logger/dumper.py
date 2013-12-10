@@ -50,6 +50,7 @@ def readTelegram(serialPort):
         reading_telegram = True
 
       if line == "!" and len(telegram) > 0 & reading_telegram:
+        telegram.append(line)
         return telegram
 
       if reading_telegram:
