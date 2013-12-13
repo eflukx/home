@@ -3,7 +3,7 @@ Data logging @Home
 
 This project has the aim to provide realtime insight in the engerie consumption, solar production and the use of other natural resources in the home environment.
 
-For it project is still in it's _very_ early stages and holds little less than some configuration scripts and other technical 'spikes'.
+This project is still in it's _very_ early stages and holds little less than some configuration scripts and other technical 'spikes' but it will grow in the future.
 
 Modules
 ------
