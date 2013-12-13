@@ -1,10 +1,11 @@
 Data logging @Home
 ====
 
-For now this project holds very litte but I plan to add more scripts & other stuff
-for my data logging @Home project
+This project has the aim to provide realtime insight in the engerie consumption, solar production and the use of other natural resources in the home environment.
 
-modules
+For it project is still in it's _very_ early stages and holds little less than some configuration scripts and other technical 'spikes'.
+
+Modules
 ------
 
 Here is an overview of the modules and scripts in this project so far;
@@ -14,7 +15,9 @@ Here is an overview of the modules and scripts in this project so far;
 * Log converter for [Highcharts](http://www.highcharts.com/) library
 
 
-demo
+Demo
 ---------
+
+Here is a power consumption chart generated with a day of captured data:
 
 sample chart [here](http://rawgithub.com/enix/home/master/aggregator/chart/index.html)
