@@ -11,11 +11,11 @@ Modules
 Here is an overview of the modules and scripts in this project so far;
 
 * [SMA Spot](https://code.google.com/p/sma-spot/) 'upstart' service scripts & setup instructions
-* P1 'Slimme Meter' Telegram logging script
-* Log converter for [Highcharts](http://www.highcharts.com/) library
+* P1 'Slimme Meter' Telegram logging script + setup instructions for a Rapsberry PI
+* Log converter for the [Highcharts](http://www.highcharts.com/) library
 
 
-Demo
+Demo chart
 ---------
 
 Here is a power consumption chart generated with a day of captured data:
