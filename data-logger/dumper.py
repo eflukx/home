@@ -16,8 +16,9 @@ import signal
 
 SERIAL_DEVICE = "/dev/ttyUSB0"
 OUTPUT_FOLDER = "/var/local/data-logger"
-THRESHOLD     = 1 # capture every message (10 seconds)  
+THRESHOLD     = 6 # capture every n-th message (10 seconds)  
 LOG_FILE      = '/var/log/data-logger.log'
+LOG_LEVEL     = logging.ERROR
 
 logger        = None
 serial_port   = None
@@ -27,7 +28,7 @@ def init_logger():
   DATE_FORMAT = '%b %d %H:%M:%S'
 
   logger = logging.getLogger('data-logger')
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(LOG_LEVEL)
   formatter = logging.Formatter(fmt=FORMAT, datefmt=DATE_FORMAT)
 
   handler = logging.FileHandler(filename = LOG_FILE)
@@ -49,7 +50,7 @@ def init_serial_port():
   serial_port.stopbits	= serial.STOPBITS_ONE
   serial_port.xonxoff 	= 0
   serial_port.rtscts 	= 0
-  serial_port.timeout 	= 20
+  serial_port.timeout 	= None
   serial_port.port 	= SERIAL_DEVICE
 
   try:
@@ -65,25 +66,26 @@ def read_telegram(serial_port):
 
   reading_telegram = False
   telegram = []
-  empty_line_counter = 0
 
   line = ''
 
+  serial_port.flushInput()
+  serial_port.write('/?!\r\n')
+  
   while True:    
     try:
       buffer = ''
 
       while True:
-         buffer += serial_port.read()
-         
-         if '\n' in buffer:
-           lines = buffer.split('\n')
-           line = lines[-2].strip()
-           buffer = lines[-1]
-           #line, buffer = buffer.split('\n')[-2:]
-           break
+        buffer += serial_port.read(serial_port.inWaiting())
 
-     # line = str(serial_port.readline()).strip()
+        if '\n' in buffer:
+          #line = buffer.strip(['\0','\n','\r'])
+          line = buffer
+          line = line.replace('\0', '')
+          line = line.replace('\r', '')
+          line = line.replace('\n', '')
+	  break
 
       logger.debug("read line: {0} ; len({1})".format(line, len(line)))
 
@@ -129,6 +131,7 @@ logger = init_logger()
 
 serial_port = init_serial_port()
 counter = 0
+first_message = True
 
 logger.info("starting")
 
@@ -138,7 +141,8 @@ while True:
 
   logger.info("got a telegram. Counter is at {0}".format(counter))
 
-  if counter >= THRESHOLD:
+  if counter >= THRESHOLD or first_message == True:
     counter = 0
+    first_message = False
     dump_telegram(telegram)
 
