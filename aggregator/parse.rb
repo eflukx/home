@@ -31,10 +31,6 @@ def as_javascript_timestamp(timestamp)
 	timestamp.to_time.to_i * 1000
 end
 
-def zero_to_nil(entry)
-	entry
-	#entry.map{ |e| e > 0 ? e : nil }
-end
 
 def time_and_measurement(entry, symbol)
 	[ as_javascript_timestamp(entry[:timestamp]) , entry[symbol] ] 
@@ -42,33 +38,35 @@ end
 
 file_names = Dir["data-logger/*.txt"]
 
-values = file_names.map(&method(:read_telegram_and_timestamp))#.sort_by{|e| e[:timestamp]}
+values = file_names.map(&method(:read_telegram_and_timestamp)).group_by{ |e| e[:timestamp].to_i / (3 * 60) }
+values = values.keys.map{ |e| values[e].last }
+
 results = values.drop(1).map.with_index { |value,index| normalize(value, values[index]) }
 
 series = [
 	{
 		:name => "verbruik laag tarief",
 		:type => 'areaspline',
-		:data => results.map { |e| 	time_and_measurement(e, :electra_import_low) }.map(&method(:zero_to_nil))
+		:data => results.map { |e| 	time_and_measurement(e, :electra_import_low) }
 	},
 	{
 		:name => "verbruik normaal tarief",
 		:type => 'areaspline',
-		:data => results.map { |e| 	time_and_measurement(e, :electra_import_normal) }.map(&method(:zero_to_nil))
+		:data => results.map { |e| 	time_and_measurement(e, :electra_import_normal) }
 	},
 	{
 		:name => "teruglevering laag tarief",
 		:type => 'areaspline',
-		:data => results.map { |e| 	time_and_measurement(e, :electra_export_low) }.map(&method(:zero_to_nil))
+		:data => results.map { |e| 	time_and_measurement(e, :electra_export_low) }
 	},
 	{
 		:name => "teruglevering normaal tarief",
 		:type => 'areaspline',
-		:data => results.map { |e| 	time_and_measurement(e, :electra_export_normal) }.map(&method(:zero_to_nil))
+		:data => results.map { |e| 	time_and_measurement(e, :electra_export_normal) }
 	},
 	# {
 	#  	:name => "gas verbruik",
-	#	:data => results.map { |e| 	select_serie(e, :gas_usage) }.map(&method(:transform_zero_to_null))
+	#	:data => results.map { |e| 	select_serie(e, :gas_usage) }
 	# }
 ]
 
