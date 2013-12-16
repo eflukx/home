@@ -71,17 +71,18 @@ def read_telegram(serial_port):
 
   serial_port.flushInput()
   serial_port.write('/?!\r\n')
-  
+
+  buffer = ''  
+
   while True:    
     try:
-      buffer = ''
-
       while True:
         buffer += serial_port.read(serial_port.inWaiting())
 
         if '\n' in buffer:
-          #line = buffer.strip(['\0','\n','\r'])
-          line = buffer
+	  lines = buffer.split('\n')
+	  buffer = lines[1]	# keep the part after the line break
+          line = lines[0]
           line = line.replace('\0', '')
           line = line.replace('\r', '')
           line = line.replace('\n', '')
