@@ -17,14 +17,18 @@ def normalize(current, previous)
 	end_time = current[:timestamp].to_time
 	to_watts = 1 / (TimeDifference.between(start_time, end_time).in_seconds / 3600) * 1000
 	
-#	puts "normalizing #{current[:timestamp]} - #{current[:telegram].valid?}"
+	calculate =->(symbol) { 
+		a = current[:telegram].send(symbol)
+		b = previous[:telegram].send(symbol)
+		return (a - b) * to_watts unless a == nil or b == nil
+	}
 
 	{
-	 :timestamp => current[:timestamp],
-	 :electra_import_low =>  (current[:telegram].electra_import_low 	 - previous[:telegram].electra_import_low) * to_watts,
-	 :electra_import_normal => (current[:telegram].electra_import_normal - previous[:telegram].electra_import_normal) * to_watts,
-	 :electra_export_low => (current[:telegram].electra_export_low 		 - previous[:telegram].electra_export_low) * to_watts,
-	 :electra_export_normal => (current[:telegram].electra_export_normal - previous[:telegram].electra_export_normal) * to_watts,
+	 :timestamp 			=> current[:timestamp],
+	 :electra_import_low 	=> calculate.(:electra_import_low),
+	 :electra_import_normal => calculate.(:electra_import_normal),
+	 :electra_export_low 	=> calculate.(:electra_export_low),
+	 :electra_export_normal => calculate.(:electra_export_normal),
 	 #:gas_usage => current[:telegram].gas_usage							 - previous[:telegram].gas_usage,
 	}
 end
