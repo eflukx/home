@@ -2,37 +2,41 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>power consumption</title>
+		<title>power &amp; gas consumption</title>
 
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="//code.highcharts.com/stock/highstock.js"></script>
+		<script src="//code.highcharts.com/stock/modules/exporting.js"></script>
+
 		<script type="text/javascript">
-$(function() {
-	$.getJSON('../series.json', function(data) {
+			$(function() {
 
-		// Create the chart
-		$('#container').highcharts('StockChart', {
-			
-			rangeSelector : {
-				selected : 1
-			},
+				var createChartFrom = function(container,chart){
+					$(container).highcharts('StockChart', {
+						
+						// rangeSelector : {
+						// 	selected : 1
+						// },
 
-			title : {
-				text : 'Power consuption'
-			},
-			yAxis: {
-                title: {
-                    text: 'Watt'
-                },
-            },
-			series : data
-		});
-	});
-});
+						title : {
+							text : chart.title
+						},
+						yAxis: {
+							title: {
+								text: chart.unit
+							},
+						},
+						series : chart.data
+					});
+				};
+
+				$.getJSON('../electra_series.json', function(data) { createChartFrom('#electra_container', data) });
+				$.getJSON('../gas_series.json', function(data) { createChartFrom('#gas_container', data) });
+			});
 		</script>
 	</head>
 	<body>
-<script src="//code.highcharts.com/stock/highstock.js"></script>
-<script src="//code.highcharts.com/stock/modules/exporting.js"></script>
-<div id="container" style="height: 500px; min-width: 500px"></div>
+		<div id="electra_container" style="height: 300px; min-width: 500px"></div>
+		<div id="gas_container" style="height: 300px; min-width: 500px"></div>
 	</body>
 </html>
