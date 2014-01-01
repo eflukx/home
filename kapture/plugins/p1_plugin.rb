@@ -53,7 +53,8 @@ module Kapture
       # 
       def handle_new_measurement(p1_telegram_data)
 
-        logger.debug "received a new p1 telegram #{p1_telegram_data}"
+        logger.debug "received a new p1 telegram"
+        logger.debug "#{p1_telegram_data}"
         
         map = get_measurement_map p1_telegram_data
 
