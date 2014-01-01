@@ -3,8 +3,11 @@ source 'https://rubygems.org'
 gem 'sinatra', :require => 'sinatra/base'
 gem 'rack-flash3', :require => 'rack-flash'
 gem 'redis'
-#gem 'less'
-#gem 'therubyracer'
 gem 'activesupport'
 gem 'time_difference'
 gem 'em-websocket'
+
+#group :development, :test do
+gem 'less'
+gem 'therubyracer'
+#end

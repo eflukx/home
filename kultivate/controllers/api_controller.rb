@@ -8,6 +8,12 @@ class Kultivate
 
 		redis = Redis.new
 
+		get '/meters' do
+			content_type :json
+
+			JSON.generate redis.keys("measurement.raw/*").map { |key| key.split('/').last }
+		end
+
 		get '/measurement/:meter_id' do |meter_id|
 
 			content_type :json

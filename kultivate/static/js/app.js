@@ -1,5 +1,7 @@
 $(function() {
 
+	'use strict'
+
 	$.ajaxSetup({cache: false});
 
 	var updateDailyChart = function(result) {
@@ -10,7 +12,6 @@ $(function() {
 				type: 'areaspline',
 				yAxis: 0,
 				data: []
-
 			},
 			{
 				name: 'verbruik normaal tarief',
@@ -112,11 +113,17 @@ $(function() {
 	};
 
 	var updateDateRange = function(result){
-		var start = _.first(result).start_timestamp * 1000;
-		var end   = _.last(result).start_timestamp * 1000;
 
-		$("#start-range").text(Globalize.format( new Date(start), "F" ));
-		$("#end-range").text(Globalize.format( new Date(end), "F" ));
+		if(result === undefined || $.isArray(result) && result.length == 0){
+			$("#end-range").text("no data");
+		}
+		else {
+			var start = _.first(result).start_timestamp * 1000;
+			var end   = _.last(result).start_timestamp * 1000;
+
+			$("#start-range").text(Globalize.format( new Date(start), "F" ));
+			$("#end-range").text(Globalize.format( new Date(end), "F" ));
+		}
 	}
 
 	var updateChartWithNewRange = function(){
@@ -127,7 +134,7 @@ $(function() {
 			var from = new Date(range.start).toUTCString();
 			var to   = new Date(range.end).toUTCString();
 
-			$.getJSON('./api/measurement/XMX5XMXABCE100085870?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
+			$.getJSON('./api/measurement/' + meter_id + '?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
 		}
 		else {
 			$("#parse-warning").fadeIn();
@@ -139,6 +146,8 @@ $(function() {
 		updateChartWithNewRange();
 	});
 
+	var meter_id;
+
 	var applicationEvents = {
 	  dailyDataLoaded : new signals.Signal()
 	};
@@ -146,6 +155,18 @@ $(function() {
 	applicationEvents.dailyDataLoaded.add(updateDailyChart);
 	applicationEvents.dailyDataLoaded.add(updateDateRange);
 
-	$.getJSON('./api/measurement/XMX5XMXABCE100085870', applicationEvents.dailyDataLoaded.dispatch );
+	$.when( $.getJSON('./api/meters' ).then( function( data ) {
+
+		meter_id = _.last(data);
+
+		if(!meter_id){
+			$("#no-data-warning").show();
+		}
+		else {
+			$.getJSON('./api/measurement/' + meter_id, applicationEvents.dailyDataLoaded.dispatch );
+		}
+
+	}));
+
 
 });
