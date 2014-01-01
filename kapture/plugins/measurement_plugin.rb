@@ -8,7 +8,7 @@ module Kapture
     class MeasurementPlugin
       include Plugin
 
-      attr_reader redis
+      attr_reader :redis
 
       def initialize
       	@redis = Redis.new
@@ -18,10 +18,8 @@ module Kapture
         raise NotImplementedError.new('OH NOES!')
       end
 
-      def new_measurement(measurement_data)
-
-      	puts "received #{measurement_data}"
-
+      def publish_new_measurement(measurement_data)
+        logger.debug "received new measurement data"
       	@redis.publish :new_measurement, measurement_data
       end
     end

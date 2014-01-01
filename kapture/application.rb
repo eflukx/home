@@ -1,20 +1,23 @@
 $:.unshift(File.dirname(__FILE__)) unless 
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-require 'logger'
-
 module Kapture
 
 	require 'lib/plugin'
+	require 'plugins/measurement_plugin'
+	require 'logger'
 
 	def self.logger
-		@logger
+		@logger ||= Logger.new(STDOUT)
 	end
 
 	def self.logger=(logger)
 		@logger = logger
 	end
 
+	#
+	# Load the plugins from the 'plugin' folder
+	# 
 	def self.load_plugins
 
 		logger.info "loading plugins"
@@ -24,13 +27,16 @@ module Kapture
 		Dir[File.join(dir, '*.rb')].each {|file| require File.basename(file) }
 	end
 
-	def self.run
+	#
+	# Application entry point
+	#
+	def self.run!
 
 		logger.info "staring Kapture"
 
 		load_plugins
 
-		MeasurementPlugin.repository.each do |plugin| 
+		Plugins::MeasurementPlugin.repository.each do |plugin| 
 
 			logger.info "staring #{plugin}"
 
@@ -38,9 +44,12 @@ module Kapture
 				plugin.new.go
 			end
 		end
-	end
 
+		logger.info "Kapture has started, now we play the waiting game..."
+
+		while true
+		end
+	end
 end
 
-Kapture::logger Logger.new(STDOUT)
-Kapture::run
+Kapture::run!

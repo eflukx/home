@@ -38,7 +38,7 @@ module Kapture
 
       def handle(p1_telegram_data)
         map = get_measurement_map p1_telegram_data
-        new_measurement map unless map == nil
+        publish_new_measurement map unless map == nil
       end
 
       def get_measurement_map(p1_telegram_data)
@@ -48,7 +48,7 @@ module Kapture
         p1 = ParseP1::Base.new p1_telegram_data
         raise "invalid p1 data" if !p1.valid? 
 
-        data = {
+        map = {
           :timestamp              => timestamp,
           :device_id              => p1.device_id,
           :electra_import_low     => p1.electra_import_low,
@@ -59,7 +59,7 @@ module Kapture
           :gas_timestamp          => (p1.last_hourly_reading_gas.to_time - 3600).to_i
         } 
 
-        data if Kultivatr::Telegram::valid? data
+        map if Kultivatr::Telegram::valid? map
       end
 
       def valid?(map)
