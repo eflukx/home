@@ -68,14 +68,14 @@ module Kapture
 
         logger.debug "storing measurement in redis"
 
-        time      = Time.at telegram[:timestamp]
-        device_id = telegram[:device_id]
+        time      = Time.at map[:timestamp]
+        device_id = map[:device_id]
 
         raw_key     = time.to_i
         by_week_key = time.strftime("%Y/%V")
         by_day_key  = time.strftime("%Y/%j")
 
-        data = telegram.to_json
+        data = map.to_json
 
         @redis.pipelined do
           @redis.zadd "measurement.raw/#{device_id}", raw_key, data
