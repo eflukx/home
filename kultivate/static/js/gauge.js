@@ -96,7 +96,7 @@ $(function () {
 	            valueSuffix: ' W'
 	        },
 			dataLabels: {
-				enabled: false,
+				enabled: true,
 			}
 	    }]
 	}, 
