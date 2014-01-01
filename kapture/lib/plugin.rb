@@ -1,15 +1,20 @@
-module Plugin
-  module ClassMethods
-    def repository
-      @repository ||= []
+module Kapture
+
+  module Plugin
+
+    module ClassMethods
+      def repository
+        @repository ||= []
+      end
+
+      def inherited(klass)
+        repository << klass
+      end
     end
 
-    def inherited(klass)
-      repository << klass
+    def self.included(klass)
+      klass.extend ClassMethods  # Somewhat controversial
     end
   end
 
-  def self.included(klass)
-    klass.extend ClassMethods  # Somewhat controversial
-  end
 end

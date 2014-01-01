@@ -1,23 +1,30 @@
-require './lib/plugin'
-require 'redis'
+module Kapture
 
-class MeasurementPlugin
-  include Plugin
+  module Plugins
 
-  attr_reader redis
+    require 'redis'
+    require './lib/plugin'
 
-  def initialize
-  	@redis = Redis.new
-  end
+    class MeasurementPlugin
+      include Plugin
 
-  def go
-    raise NotImplementedError.new('OH NOES!')
-  end
+      attr_reader redis
 
-  def new_measurement(measurement_data)
+      def initialize
+      	@redis = Redis.new
+      end
 
-  	puts "received #{measurement_data}"
+      def go
+        raise NotImplementedError.new('OH NOES!')
+      end
 
-  	@redis.publish :new_measurement, measurement_data
+      def new_measurement(measurement_data)
+
+      	puts "received #{measurement_data}"
+
+      	@redis.publish :new_measurement, measurement_data
+      end
+    end
+
   end
 end
