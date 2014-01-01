@@ -19,7 +19,7 @@ module Kapture
       end
 
       def publish_new_measurement(measurement_data)
-        logger.debug "received new measurement data"
+        logger.debug "publishing new measurement data"
       	@redis.publish :new_measurement, measurement_data
       end
     end

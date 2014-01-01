@@ -48,6 +48,8 @@ module Kapture
         
         map = get_measurement_map p1_telegram_data
 
+        logger.debug "received a new p1 telegram #{map}"
+
         store_new_measurement map unless map == nil
         publish_new_measurement map unless map == nil
       end
@@ -56,6 +58,8 @@ module Kapture
       # store the measurement in the redis db
       #
       def store_new_measurement(map)
+
+        logger.debug "storing measurement in redis"
 
         time      = Time.at telegram[:timestamp]
         device_id = telegram[:device_id]
@@ -66,10 +70,10 @@ module Kapture
 
         data = telegram.to_json
 
-        redis.pipelined do
-          redis.zadd "measurement.raw/#{device_id}", raw_key, data
-          redis.hset "measurement.byday/#{device_id}", by_day_key, data
-          redis.hset "measurement.byweek/#{device_id}", by_week_key, data
+        @redis.pipelined do
+          @redis.zadd "measurement.raw/#{device_id}", raw_key, data
+          @redis.hset "measurement.byday/#{device_id}", by_day_key, data
+          @redis.hset "measurement.byweek/#{device_id}", by_week_key, data
         end
 
       end
