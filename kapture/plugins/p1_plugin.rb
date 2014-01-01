@@ -10,6 +10,7 @@ module Kapture
     class P1Reader < MeasurementPlugin
 
       include Logging
+      require 'active_support/core_ext/hash'
 
       #
       # start watching the serial device for P1
@@ -58,7 +59,7 @@ module Kapture
         
         map = get_measurement_map p1_telegram_data
 
-        publish_new_measurement map unless map == nil
+        publish_new_measurement map.to_json unless map == nil
 
         store_new_measurement map.except :current_power_usage unless map == nil
       end
