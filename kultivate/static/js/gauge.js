@@ -107,7 +107,7 @@ $(function () {
 			var websocket = new WebSocket("ws://" + window.location.hostname + ":8081");
 			websocket.onmessage = function(evt) {
 				var point = chart.series[0].points[0];
-				point.update(parseInt(evt.data));
+				point.update(parseInt(evt.data.current_power_usage));
 			};
 		}
 	});
