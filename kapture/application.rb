@@ -45,11 +45,24 @@ module Kapture
 			end
 		end
 
+		wait_for_application_exit
+	end
+
+	def self.wait_for_application_exit
+	
 		logger.info "Kapture has started, now we play the waiting game..."
 
-		while true
+		running = true
+		trap("SIGINT") { running = false }
+
+		while running
 		end
+
+		logger.info "Kapture has won"
+
 	end
+
 end
+
 
 Kapture::run!
