@@ -58,8 +58,9 @@ module Kapture
         
         map = get_measurement_map p1_telegram_data
 
-        store_new_measurement map unless map == nil
         publish_new_measurement map unless map == nil
+
+        store_new_measurement map.except :current_power_usage unless map == nil
       end
 
       #
@@ -103,6 +104,7 @@ module Kapture
           :electra_import_normal  => p1.electra_import_normal,
           :electra_export_low     => p1.electra_export_low,
           :electra_export_normal  => p1.electra_export_normal,
+          :current_power_usage    => p1.actual_electra,
           :gas_usage              => p1.gas_usage,
           :gas_timestamp          => (p1.last_hourly_reading_gas.to_time - 3600).to_i
         } 
