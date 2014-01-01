@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Home by enix</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Home</h1>
+        <p>Home automation software stack</p>
+
+        <p class="view"><a href="https://github.com/enix/home">View the Project on GitHub <small>enix/home</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/enix/home/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/enix/home/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/enix/home">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="data-logging-home" class="anchor" href="#data-logging-home"><span class="octicon octicon-link"></span></a>Data logging <a href="https://github.com/Home" class="user-mention">@Home</a>
+</h1>
+
+<p>This project has the aim to provide realtime insight in the energie consumption, solar production and the use of other natural resources in the home environment.</p>
+
+<blockquote>
+<p>Please note! This software is <em>not</em> ready for prime-time and / or general use. There are no wizards or install scripts that will gently guide you and the software is still in it's <em>very</em> early alpha stage.</p>
+</blockquote>
+
+<h1>
+<a name="overall-architecture" class="anchor" href="#overall-architecture"><span class="octicon octicon-link"></span></a>Overall architecture</h1>
+
+<p>The project comprises of two components; <strong>kapture</strong>, for harvesting data and <strong>kultivate</strong> for giving insights. Measurement data is stored in a <a href="http://redis.io">Redis</a> database and graphs are rendered using <a href="http://www.highcharts.com/">Highcharts</a> that are fed via a JSON API hosted by <a href="http://www.sinatrarb.com">Sinatra</a>. </p>
+
+<h2>
+<a name="kapture-plugins" class="anchor" href="#kapture-plugins"><span class="octicon octicon-link"></span></a>Kapture plugins</h2>
+
+<p>Kapture is build around a naive plugin system where each logger gets is own thread and can dump data into the backend database and publish updates to the UI.</p>
+
+<p>Currently the following devices can be monitored:</p>
+
+<ul>
+<li>Dutch Smart Meter 'P1' telemetry
+
+<ul>
+<li>Electricity &amp; Gas consumption during the day / week </li>
+<li>Live power usage<br>
+</li>
+</ul>
+</li>
+</ul><p>On the todo list are:</p>
+
+<ul>
+<li>SMA Solar converter via <a href="https://code.google.com/p/sma-spot/">SMA Spot</a> </li>
+<li>OpenTherm gateway</li>
+</ul><h2>
+<a name="kultivate-" class="anchor" href="#kultivate-"><span class="octicon octicon-link"></span></a>Kultivate </h2>
+
+<p>Kultivate is a Sinatra web-app that servers the raw measurement data via JSON. Together with some client-side JavaScript transformation graphs are rendered that show the historic data and the actual power consumption.</p>
+
+<p>The <a href="https://github.com/mobz/date-range-parser">data-range-parser</a> library is used to construct historic data range queries such as 'yesterday', 'last week' and '15-&gt;16'.</p>
+
+<p>On the todo list are:</p>
+
+<ul>
+<li>A lot more graphs and comparison features</li>
+<li>setup wizards</li>
+<li>comparing between users and devices</li>
+</ul><h1>
+<a name="required-hardware" class="anchor" href="#required-hardware"><span class="octicon octicon-link"></span></a>Required Hardware</h1>
+
+<ul>
+<li>Rapberry PI or simular</li>
+<li>FT232 USB Cable Computer Cable <a href="http://www.ebay.com/itm/261101529602">on ebay</a>
+</li>
+</ul><p>pinout:</p>
+
+<pre><code>1 - Black:GND 
+2 - Blue:CTS 
+3 - Red:5V 
+4 - Green:TXD 
+5 - White:RXD 
+6 - Yellow:RTS 
+</code></pre>
+
+<ul>
+<li>Smart meter </li>
+</ul><p>connection:</p>
+
+<pre><code>pin nr / RJ11 function
+
+2 - request (RTS)
+3 - ground (GND)
+4 - N.C. (N.C.)
+5 - data (RxD)
+</code></pre>
+
+<p>For more informatio see this article on <a href="http://gejanssen.com/howto/Slimme-meter-uitlezen/index.html">gejanssen.com</a></p>
+
+<h2>
+<a name="ft232-signal-invert" class="anchor" href="#ft232-signal-invert"><span class="octicon octicon-link"></span></a>FT232 Signal invert</h2>
+
+<p>Please keep in mind that the Rx signal sent by the Smart Meter is inverted. You can configure this chip using <a href="http://rtr.ca/ft232r/">ft232r_prog</a> Execute the following command to check the configuration of you FT232 USB chip.</p>
+
+<pre><code>sudo ./ft232r_prog --dump
+</code></pre>
+
+<p>inspect the <code>rxd_inverted</code> property and make sure it is set to 1. If not, execute</p>
+
+<pre><code>sudo ./ft232r_prog --invert_rxd
+</code></pre>
+
+<p>to invert the Rx signal.</p>
+
+<h1>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<p>Both Kapture &amp; Kultivate are written in Ruby and thus require a working Ruby stack. The software has been tested on the 1.9 branch.</p>
+
+<h2>
+<a name="required-software" class="anchor" href="#required-software"><span class="octicon octicon-link"></span></a>Required software</h2>
+
+<ul>
+<li>Ruby 1.9 </li>
+<li>Bundler</li>
+<li>Redis</li>
+</ul><h2>
+<a name="kapture" class="anchor" href="#kapture"><span class="octicon octicon-link"></span></a>Kapture</h2>
+
+<p>To install the required gems run the following command </p>
+
+<pre><code>bundle install
+</code></pre>
+
+<p>Start harvesting via</p>
+
+<pre><code>bundle exed ruby application.rb
+</code></pre>
+
+<p>*** USB serial device</p>
+
+<p>To find your USB serial TTY execute the following command</p>
+
+<pre><code>ls /sys/bus/usb-serial/devices/
+</code></pre>
+
+<p>This gives you an overview of the connected devices (probably 1). Copy this value and execute</p>
+
+<pre><code>vim kapture/plugins/p1_plugin.rb
+</code></pre>
+
+<p>Make sure the <code>/dev/tty&lt;some-name&gt;</code> equals the device name you've just copied</p>
+
+<h2>
+<a name="kultivate" class="anchor" href="#kultivate"><span class="octicon octicon-link"></span></a>Kultivate</h2>
+
+<p>To install the required gems run the following command </p>
+
+<pre><code>bundle install
+</code></pre>
+
+<p>Run</p>
+
+<pre><code>bundle exed rackup
+</code></pre>
+
+<p>and surf to</p>
+
+<pre><code>http://your-machine::9292
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/enix">enix</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
