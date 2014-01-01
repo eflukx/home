@@ -64,5 +64,5 @@ module Kapture
 
 end
 
-
+Kapture::logger.level = Logger::DEBUG
 Kapture::run!
