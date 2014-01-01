@@ -3,24 +3,19 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 module Kapture
 
-	require 'lib/plugin'
-	require 'plugins/measurement_plugin'
 	require 'logger'
+	require 'lib/plugin'
+	require 'lib/logging'
+	require 'plugins/measurement_plugin'
 
-	def self.logger
-		@logger ||= Logger.new(STDOUT)
-	end
-
-	def self.logger=(logger)
-		@logger = logger
-	end
+	include Logging
 
 	#
 	# Load the plugins from the 'plugin' folder
 	# 
 	def self.load_plugins
 
-		logger.info "loading plugins"
+		Logging::logger.info "loading plugins"
 
 		dir = './plugins'
 		$LOAD_PATH.unshift(dir)
@@ -32,13 +27,13 @@ module Kapture
 	#
 	def self.run!
 
-		logger.info "staring Kapture"
+		Logging::logger.info "staring Kapture"
 
 		load_plugins
 
 		Plugins::MeasurementPlugin.repository.each do |plugin| 
 
-			logger.info "staring #{plugin}"
+			Logging::logger.info "staring #{plugin}"
 
 			Thread.new do
 				plugin.new.go
@@ -50,7 +45,7 @@ module Kapture
 
 	def self.wait_for_application_exit
 	
-		logger.info "Kapture has started, now we play the waiting game..."
+		Logging::logger.info "Kapture has started, now we play the waiting game..."
 
 		running = true
 		trap("SIGINT") { running = false }
@@ -58,11 +53,11 @@ module Kapture
 		while running
 		end
 
-		logger.info "Kapture has won"
+		Logging::logger.info "Kapture has won"
 
 	end
 
 end
 
-Kapture::logger.level = Logger::DEBUG
+Kapture::Logging::logger.level = Logger::DEBUG
 Kapture::run!

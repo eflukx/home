@@ -9,6 +9,8 @@ module Kapture
 
     class P1Reader < MeasurementPlugin
 
+      include Logging
+
       #
       # start watching the serial device for P1
       #
