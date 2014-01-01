@@ -59,5 +59,7 @@ module Kapture
 
 end
 
+Thread.abort_on_exception=true 
+
 Kapture::Logging::logger.level = Logger::DEBUG
 Kapture::run!
