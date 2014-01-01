@@ -52,10 +52,10 @@ module Kapture
       # store & publish the new P1 readout 
       # 
       def handle_new_measurement(p1_telegram_data)
+
+        logger.debug "received a new p1 telegram #{p1_telegram_data}"
         
         map = get_measurement_map p1_telegram_data
-
-        logger.debug "received a new p1 telegram #{map}"
 
         store_new_measurement map unless map == nil
         publish_new_measurement map unless map == nil
@@ -93,7 +93,7 @@ module Kapture
         timestamp = Time.now.to_i
 
         p1 = ParseP1::Base.new p1_telegram_data
-        raise "invalid p1 data" if !p1.valid? 
+        return nil if !p1.valid? 
 
         map = {
           :timestamp              => timestamp,
