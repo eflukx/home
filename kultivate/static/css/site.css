@@ -1,0 +1,175 @@
+@import "elements.less";
+
+body{
+	font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+}
+
+.content {
+	padding: 2em 3em 0;
+}
+
+#daily_chart{
+	height:300px;
+}
+
+
+#day_chart{
+	height:200px;
+}
+
+#gauge_chart{
+	height:200px;
+}
+
+/* 
+ 	inline charts
+ ---------------------------------------------------------------------- */
+
+.chart {
+  position: relative;
+  display: inline-block;
+  width: 110px;
+  height: 110px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+.chart canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.percent {
+  display: inline-block;
+  line-height: 110px;
+  z-index: 2;
+}
+.percent:after {
+  content: '%';
+  margin-left: 0.1em;
+  font-size: .8em;
+}
+
+
+
+
+
+/* 
+ 	forms
+ ---------------------------------------------------------------------- */
+
+form {
+
+	position: relative;
+
+	.icon-prepend {
+		color: #A2A2A2;
+		left: 5px;
+		top: 9px;
+		padding-right: 3px;
+		border-right-width: 1px;
+		border-right-style: solid;
+		position: absolute;
+		width: 22px;
+		height: 22px;
+		font-size: 14px;
+		line-height: 22px;
+		text-align: center;		
+	}
+
+	.icon-prepend+input{
+		padding-left: 37px !important;
+	}	
+} 
+
+#date-range{
+	width:60em;	
+}
+
+.date-range-text{
+	font-size:13px;
+	color: #666;
+}
+
+
+/* 
+ 	widget control
+ ---------------------------------------------------------------------- */
+
+.widget{
+
+	header[role='heading']{
+		color: #333;
+		border: 1px solid #C2C2C2;
+		background: #fafafa;
+		height: 34px;
+		padding: 0;
+		line-height: 40px;
+		.inner-shadow(0, -2px, 0px, 0.05);
+
+		> h2{
+			height: 100%;
+			width: auto;
+			display: inline-block;
+			font-size: 14px;
+			position: relative;
+			margin: 0;
+			line-height: 34px;
+			font-weight: normal;
+			letter-spacing: 0;
+
+			margin-left: 10px;
+			float: left;
+		}
+
+		.widget-icon{
+			display: block;
+			width: 30px;
+			height: 32px;
+			position: relative;
+			float: left;
+			font-size: 111%;
+			line-height: 32px;
+			text-align: center;
+			margin-right: -10px;
+		}
+	}	
+
+	.widget-toolbar{
+		display: block;
+		padding: 8px 10px;
+		min-height: 42px;
+		border-bottom: 1px solid #ccc;
+		border-left: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+		background: #fafafa;
+		position:relative;
+	}
+
+	> div[role='content']{
+		position: relative;
+		font-size: 13px;
+		margin: 0;
+		border-width: 1px 1px 2px;
+		border-style: solid;
+		border-top: none;
+		border-right-color: #CCC;
+		border-bottom-color: #CCC;
+		border-left-color: #CCC;
+		padding: 13px 13px 0;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
