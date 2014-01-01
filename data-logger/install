@@ -1,4 +1,0 @@
-chmod +x dumper.py
-cp dumper.py /usr/local/bin
-cp data-logger.conf /etc/init
-mkdir -p /var/local/data-logger
