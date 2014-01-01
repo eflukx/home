@@ -1,14 +1,17 @@
+require 'serialport'
+require 'parse_p1'
+require 'json'
+require 'measurement_plugin'
+
 module Kapture
 
   module Plugins
 
-    require 'serialport'
-    require 'parse_p1'
-    require 'json'
-    require 'measurement_plugin'
-
     class P1Reader < MeasurementPlugin
 
+      #
+      # start watching the serial device for P1
+      #
       def go
           ser = SerialPort.new("/dev/ttyUSB0", 9600, 7, 1, SerialPort::EVEN)
 
@@ -31,16 +34,49 @@ module Kapture
               p1_telegram_data = buffer.join
               buffer = []
 
-              handle p1_telegram_data
+              handle_new_measurement p1_telegram_data
             end
           end
       end
 
-      def handle(p1_telegram_data)
+      private 
+
+      #
+      # store & publish the new P1 readout 
+      # 
+      def handle_new_measurement(p1_telegram_data)
+        
         map = get_measurement_map p1_telegram_data
+
+        store_new_measurement map unless map == nil
         publish_new_measurement map unless map == nil
       end
 
+      #
+      # store the measurement in the redis db
+      #
+      def store_new_measurement(map)
+
+        time      = Time.at telegram[:timestamp]
+        device_id = telegram[:device_id]
+
+        raw_key     = time.to_i
+        by_week_key = time.strftime("%Y/%V")
+        by_day_key  = time.strftime("%Y/%j")
+
+        data = telegram.to_json
+
+        redis.pipelined do
+          redis.zadd "measurement.raw/#{device_id}", raw_key, data
+          redis.hset "measurement.byday/#{device_id}", by_day_key, data
+          redis.hset "measurement.byweek/#{device_id}", by_week_key, data
+        end
+
+      end
+
+      #
+      # convert the P1 telegram to a simple map
+      # 
       def get_measurement_map(p1_telegram_data)
 
         timestamp = Time.now.to_i
@@ -62,6 +98,9 @@ module Kapture
         map if Kultivatr::Telegram::valid? map
       end
 
+      #
+      # validate the readout
+      # 
       def valid?(map)
         map[:timestamp] != nil and
         map[:device_id] != nil and
