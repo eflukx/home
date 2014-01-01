@@ -13,11 +13,16 @@ module Kapture
       # start watching the serial device for P1
       #
       def go
-          ser = SerialPort.new("/dev/ttyUSB0", 9600, 7, 1, SerialPort::EVEN)
+
+          logger.info "starting p1 data logger"
+
+          serial_device = "/dev/ttyUSB0" 
+          ser = SerialPort.new(serial_device, 9600, 7, 1, SerialPort::EVEN)
+
+          logger.info "p1 plugin is listening to #{serial_device}"
 
           buffer = []
           reading_telegram = false
-
           while true
             c = ser.getc
             
