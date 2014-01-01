@@ -106,7 +106,7 @@ module Kapture
           :gas_timestamp          => (p1.last_hourly_reading_gas.to_time - 3600).to_i
         } 
 
-        map if Kultivatr::Telegram::valid? map
+        map if valid? map
       end
 
       #
