@@ -86,7 +86,7 @@ to invert the Rx signal.
 Installation
 ===
 
-Both Kapture & Kultivate are writting Ruby and thus require a working Ruby stack. The software has been tested on the 1.9 branch.
+Both Kapture & Kultivate are written in Ruby and thus require a working Ruby stack. The software has been tested on the 1.9 branch.
 
 
 Required software
