@@ -8,21 +8,14 @@ module Kapture
     class MeasurementPlugin
       include Plugin
 
-      attr_reader :redis
-
-      def initialize
-      	@redis = Redis.new
-      end
-
-      def go
+      #
+      # start a measurement plugin
+      # this operation will typically block im a while true loop
+      #
+      def go!
         raise NotImplementedError.new('OH NOES!')
       end
 
-      def publish_new_measurement(measurement_data)
-        logger.debug "publishing new measurement data"
-      	@redis.publish :new_measurement, measurement_data
-      end
     end
-
   end
 end

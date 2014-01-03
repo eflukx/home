@@ -5,3 +5,7 @@ gem 'em-websocket'
 gem 'parse_p1', :git => 'git://github.com/enix/ParseP1.git'
 gem 'serialport'
 gem 'active_support'
+
+group :development, :test do
+	gem 'rspec'
+end

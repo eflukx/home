@@ -36,7 +36,7 @@ module Kapture
 			Logging::logger.info "staring #{plugin}"
 
 			Thread.new do
-				plugin.new.go
+				plugin.new.go!
 			end
 		end
 

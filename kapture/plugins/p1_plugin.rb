@@ -1,7 +1,7 @@
+require 'json'
+require 'active_support/core_ext/hash'
 require 'serialport'
 require 'parse_p1'
-require 'json'
-require 'measurement_plugin'
 
 module Kapture
 
@@ -10,12 +10,17 @@ module Kapture
     class P1Reader < MeasurementPlugin
 
       include Logging
-      require 'active_support/core_ext/hash'
+
+      attr_reader :redis
+
+      def initialize
+        @redis = Redis.new
+      end
 
       #
       # start watching the serial device for P1
       #
-      def go
+      def go!
 
           logger.info "starting p1 data logger"
 
@@ -26,7 +31,7 @@ module Kapture
 
           buffer = []
           reading_telegram = false
-          while true
+          while true  
             c = ser.getc
             
             if c == '/' 
@@ -59,31 +64,59 @@ module Kapture
         
         map = get_measurement_map p1_telegram_data
 
-        publish_new_measurement map.to_json unless map == nil
+        publish_current_energy_consumption map unless map == nil
 
         store_new_measurement map.except :current_power_usage unless map == nil
+      end
+
+      def publish_current_energy_consumption(measurement_data)
+
+        logger.debug "publishing current energy consumption"
+
+        message = {
+          :timestamp  => measurement_data[:timestamp],
+          :device_id  => measurement_data[:device_id],
+          :value      => measurement_data[:current_energy_usage]
+        }.to_json
+
+        @redis.publish :current_energy_consumption, msg
       end
 
       #
       # store the measurement in the redis db
       #
-      def store_new_measurement(map)
+      def store_new_measurement(measurement_data)
+
+        raise "invalid measurement data" if !valid? measurement_data
 
         logger.debug "storing measurement in redis"
 
-        time      = Time.at map[:timestamp]
-        device_id = map[:device_id]
+        time      = Time.at measurement_data[:timestamp]
+        device_id = measurement_data[:device_id]
 
         raw_key     = time.to_i
         by_week_key = time.strftime("%Y/%V")
         by_day_key  = time.strftime("%Y/%j")
 
-        data = map.to_json
+        data =->(timestamp_key, measurement_key) {
+         {
+            :timestamp  => measurement_data[timestamp_key],
+            :value      => measurement_data[measurement_key]
+          }.to_json
+        }
+
+        store_measurement =->(key, data){
+            @redis.zadd "#{key}.raw/#{device_id}", raw_key, data
+            @redis.hset "#{key}.byday/#{device_id}", by_day_key, data
+            @redis.hset "#{key}.byweek/#{device_id}", by_week_key, data
+        }
 
         @redis.pipelined do
-          @redis.zadd "measurement.raw/#{device_id}", raw_key, data
-          @redis.hset "measurement.byday/#{device_id}", by_day_key, data
-          @redis.hset "measurement.byweek/#{device_id}", by_week_key, data
+          keys = [:electra_import_low, :electra_import_normal,
+                  :electra_export_low, :electra_export_normal]
+          keys.map{|e| store_measurement.(e, data.(:timestamp,e))}
+
+          store_measurement.(:gas_usage, data.(:gas_timestamp,:gas_usage))          
         end
 
       end
@@ -105,7 +138,7 @@ module Kapture
           :electra_import_normal  => p1.electra_import_normal,
           :electra_export_low     => p1.electra_export_low,
           :electra_export_normal  => p1.electra_export_normal,
-          :current_power_usage    => p1.actual_electra,
+          :current_energy_usage   => p1.actual_electra,
           :gas_usage              => p1.gas_usage,
           :gas_timestamp          => (p1.last_hourly_reading_gas.to_time - 3600).to_i
         } 
@@ -127,8 +160,6 @@ module Kapture
       end
 
     end
-
   end
-
 end
 
