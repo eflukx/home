@@ -79,7 +79,7 @@ module Kapture
           :value      => measurement_data[:current_energy_usage]
         }.to_json
 
-        @redis.publish :current_energy_consumption, msg
+        @redis.publish :current_energy_consumption, message
       end
 
       #
