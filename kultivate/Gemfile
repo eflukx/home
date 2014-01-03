@@ -7,7 +7,9 @@ gem 'activesupport'
 gem 'time_difference'
 gem 'em-websocket'
 
-#group :development, :test do
-gem 'less'
-gem 'therubyracer'
-#end
+group :development, :test do
+	gem 'rack-test'
+	gem 'less'
+	gem 'therubyracer'
+	gem 'rspec'
+end

@@ -1,53 +1,69 @@
-class Kultivate
-	class ApiController
+require 'sinatra/base'
+require 'redis'
+require 'date'
+require 'json'
+require 'active_support/core_ext'
 
-		require 'redis'
-		require 'date'
-		require 'json'
-		require 'active_support/core_ext'
+module Kultivate
 
-		redis = Redis.new
+	class Application
 
-		get '/meters' do
-			content_type :json
+		class ApiController
 
-			JSON.generate redis.keys("measurement.raw/*").map { |key| key.split('/').last }
-		end
+			redis = Redis.new
 
-		get '/measurement/:meter_id' do |meter_id|
+			get '/meters' do
+				content_type :json
 
-			content_type :json
+				JSON.generate redis.keys("*.raw/*").map { |key| key.split('/').last }.uniq
+			end
 
-			from = Time.parse(params[:from] ||= Date.today.to_s)
-			to 	 = Time.parse(params[:to] ||= Date.tomorrow.to_s)
+			get '/measurements/:meter_id' do |meter_id|
 
-			result = redis.zrangebyscore "measurement.raw/#{meter_id}", from.to_i, to.to_i	
-			JSON.generate Kultivatr::normalize result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }, group_values = true
-		end
+				content_type :json
 
-		# get %r{/measurement/(.*)/by(week|day)} do |meter_id, type|
+				from = Time.parse(params[:from] ||= Date.today.to_s)
+				to 	 = Time.parse(params[:to] ||= Date.tomorrow.to_s)
 
-		# 	content_type :json
+				redis.pipeline do
 
-		# 	format = "%V" if type == 'week'
-		# 	format = "%j" if type == 'day'
+					keys = [:electra_import_low, :electra_import_normal,
+							:electra_export_low, :electra_export_normal,
+							:gas_usage]
 
-		# 	start = 10.weeks.ago if type == 'week'
-		# 	start = 30.days.ago if type == 'day'
+					result = keys.map do |p|
+						redis.zrangebyscore "measurement.raw/#{meter_id}", from.to_i, to.to_i	
+					end
 
-		# 	from = Time.parse(params[:from] ||= start.to_date.to_s )
-		# 	to 	 = Time.parse(params[:to] ||= Date.today.to_s)
+					JSON.generate Kultivatr::normalize result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }, group_values = true
 
-		# 	fields = (from.to_i..to.to_i).step(1.day).map { |timestamp| 	
-		# 		Time.at(timestamp).strftime("%Y/#{format}")
-		# 	}.uniq
+				end
+			end
 
-		# #	puts "measurement.by#{type}/#{meter_id}", fields
+			# get %r{/measurement/(.*)/by(week|day)} do |meter_id, type|
 
-		# 	result = redis.hmget "measurement.by#{type}/#{meter_id}", fields
+			# 	content_type :json
 
-		# 	JSON.generate Kultivatr::Electricity::day_usage result.reject(&:blank?).map{ |e| Kultivatr::Telegram.from_json e } 
-		# end
+			# 	format = "%V" if type == 'week'
+			# 	format = "%j" if type == 'day'
+
+			# 	start = 10.weeks.ago if type == 'week'
+			# 	start = 30.days.ago if type == 'day'
+
+			# 	from = Time.parse(params[:from] ||= start.to_date.to_s )
+			# 	to 	 = Time.parse(params[:to] ||= Date.today.to_s)
+
+			# 	fields = (from.to_i..to.to_i).step(1.day).map { |timestamp| 	
+			# 		Time.at(timestamp).strftime("%Y/#{format}")
+			# 	}.uniq
+
+			# #	puts "measurement.by#{type}/#{meter_id}", fields
+
+			# 	result = redis.hmget "measurement.by#{type}/#{meter_id}", fields
+
+			# 	JSON.generate Kultivatr::Electricity::day_usage result.reject(&:blank?).map{ |e| Kultivatr::Telegram.from_json e } 
+			# end
 			
+		end
 	end
 end

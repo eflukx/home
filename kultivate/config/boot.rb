@@ -10,5 +10,8 @@ lib_files = File.join(app_dir, %w(lib ** *))
 
 files = [controller_files, lib_files]
 
-Dir.glob(files).each {|lf| require lf }
+Dir.glob(files).each {|lf| 
+	puts lf
+	require lf
+ }
 

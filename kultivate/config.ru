@@ -6,4 +6,4 @@ require './config/boot'
 
 LiveUpdater.new.start
 
-run Kultivate
+run Kultivate::Application
