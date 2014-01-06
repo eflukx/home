@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'redis'
 
-require 'lib/logging'
-require 'plugins/measurement_plugin'
-require 'plugins/p1_plugin'
+require 'kapture/lib/logging'
+require 'kapture/plugins/measurement_plugin'
+require 'kapture/plugins/p1_plugin'
 
 describe Kapture::Plugins::P1Reader do
 

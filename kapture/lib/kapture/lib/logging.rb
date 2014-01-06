@@ -1,6 +1,6 @@
-require 'logger'
-
 module Kapture
+	
+	require 'logger'
 
 	module Logging
 

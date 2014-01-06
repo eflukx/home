@@ -6,9 +6,9 @@ $:.unshift(File.dirname(__FILE__)) unless
 module Kapture
 
 	require 'logger'
-	require 'lib/plugin'
-	require 'lib/logging'
-	require 'plugins/measurement_plugin'
+	require 'kapture/lib/plugin'
+	require 'kapture/lib/logging'
+	require 'kapture/plugins/measurement_plugin'
 
 	include Logging
 

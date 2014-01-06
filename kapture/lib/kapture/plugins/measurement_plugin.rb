@@ -3,7 +3,7 @@ module Kapture
   module Plugins
 
     require 'redis'
-    require './lib/plugin'
+    require 'kapture/lib/plugin'
 
     class MeasurementPlugin
       include Plugin

@@ -1,9 +1,9 @@
-require 'json'
-require 'active_support/core_ext/hash'
-require 'serialport'
-require 'parse_p1'
-
 module Kapture
+
+  require 'json'
+  require 'active_support/core_ext/hash'
+  require 'serialport'
+  require 'parse_p1'
 
   module Plugins
 
