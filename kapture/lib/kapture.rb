@@ -19,9 +19,15 @@ module Kapture
 
 		Logging::logger.info "loading plugins"
 
-		dir = './plugins'
+		dir = File.dirname(__FILE__) + '/../lib/kapture/plugins'
+
+		Logging::logger.info "plugin folder #{dir}"
+
 		$LOAD_PATH.unshift(dir)
-		Dir[File.join(dir, '*.rb')].each {|file| require File.basename(file) }
+		plugins = Dir[File.join(dir, '*.rb')]
+		Logging::logger.info "found #{plugins.length} plugins"
+
+		plugins.each {|file| require File.basename(file) }
 	end
 
 	#
