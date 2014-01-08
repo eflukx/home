@@ -88,11 +88,11 @@ In a raw measument, the Epoch timestamp doubles as the score for sorting
 
 
 Live data
-#######
+==============
 
 using redis pub/sub & websockets. Need to come up with a channel naming convention and a way of discovering which channels are available.
 
 Configuration
-#####
+==============
 
 Nothing here yet
