@@ -40,21 +40,55 @@ Empty plugin
 Data storage
 ---------
 
-Something about key spacing naming convention
+*** keys ***
 
-key name:
-	<plugin-name>:<measurement-type>:<meter-id>.[raw|day|week|month|]
+key name must following this naming convention:
 
-key value:
+	<plugin-name>:<measurement-type>:<meter-id>.[raw|byday|byweek|bymonth|]
+
+example:
+
+	p1:electra_import_low:test-device.raw
+
+*** storage types ***
+
+* Raw measurements are stored as a `sorted set`
+* Aggregated measurements are stored as a `hash map` with fields indicating the interval.
+
+**** raw measurements
+
+raw measurements are stored in a `sorted set`. 
+
+**** aggregated measurements
+
+aggregated measurements are stored in a hash table with fields with the following naming convention:
+
+	<year><interval>
+
+examples:
+
+	p1:electra_import_low:test-device.byday
+	
+		field => 20141	First day of the year 2014
+		field => 201410	Tenth day of the year 2014
+
+	p1:electra_import_low:test-device.byweek
+
+		field => 201350	Week 50 of 2013
+
+> Please note that ISO8601 is followed when it comes to week numbers.
+
+*** values ***
+
+each measurment must be stored as a JSON object with the following structure 
 
 	{
-		timestamp:
-		value:
+		timestamp: <timestamp as epoch>
+		value: <floating point measurement value>
 	}
 
-raw measument is a sorted set with the timestamp as the score
+In a raw measument, the Epoch timestamp doubles as the score for sorting
 
-aggregated data is a hash key
 
 Live data
 --------
