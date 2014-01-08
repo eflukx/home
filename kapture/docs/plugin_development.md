@@ -38,7 +38,7 @@ end
 Data storage
 =============
 
-keys 
+keys spaces 
 -------------
 
 key name must following this naming convention:
@@ -49,7 +49,8 @@ example:
 
 	p1:electra_import_low:test-device.raw
 
-## storage types
+storage data types
+-------------------
 
 ### raw measurements
 
@@ -74,7 +75,7 @@ aggregated measurements are stored in a hash table with fields with the followin
 
 > Please note that ISO8601 is followed when it comes to week numbers.
 
-values 
+measurment values 
 ----------
 
 each measurment must be stored as a JSON object with the following structure 
