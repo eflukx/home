@@ -6,15 +6,16 @@ This project has the aim to provide realtime insight in the energie consumption,
 > Please note! This software is _not_ ready for prime-time and / or general use. There are no wizards or install scripts that will gently guide you and the software is still in it's _very_ early alpha stage.
 
 
-Overall architecture
-==
+
+Project Structure
+====================================
 
 The project comprises of two components; **kapture**, for harvesting data and **kultivate** for giving insights. Measurement data is stored in a [Redis](http://redis.io) database and graphs are rendered using [Highcharts](http://www.highcharts.com/) that are fed via a JSON API hosted by [Sinatra](http://www.sinatrarb.com). 
 
-Kapture plugins
---
+Kapture
+----------------
 
-Kapture is build around a naive plugin system where each logger gets is own thread and can dump data into the backend database and publish updates to the UI.
+Kapture is build around a naive plugin system where each logger can dump data into the database and publish updates to the UI.
 
 Currently the following devices can be monitored:
 
@@ -27,9 +28,10 @@ On the todo list are:
 * SMA Solar converter via [SMA Spot](https://code.google.com/p/sma-spot/) 
 * OpenTherm gateway
 
+Please see [developing a Kapture plugin](kapture/docs/plugin_development.md) for more technical information.
 
 Kultivate 
---
+----------------
 
 Kultivate is a Sinatra web-app that servers the raw measurement data via JSON. Together with some client-side JavaScript transformation graphs are rendered that show the historic data and the actual power consumption.
 
@@ -41,8 +43,84 @@ On the todo list are:
 * setup wizards
 * comparing between users and devices
 
+
+
+Available Plugins
+====================================
+
+Please check the documentation of each individual plugin to find out more about it's required hardware and configuration settings.
+
+* [P1 Telegram logger](P1 Telegram logger)
+
+Enabling plugings
+-----------
+
+Right now all the plugins are loaded and activated by default. 
+
+
+Installation
+====================================
+
+Both Kapture & Kultivate are written in Ruby and thus require a working Ruby stack. The software has been tested on the 1.9 branch.
+
+
+Required software
+---
+* Ruby 1.9 
+* Bundler
+* Redis
+
+Kapture
+---
+
+To install the required gems run the following command 
+
+	bundle install
+
+Start harvesting via
+
+	bundle exed ruby kapture.rb
+
+Kultivate
+---
+
+To install the required gems run the following command 
+
+	bundle install
+
+Run
+
+	bundle exed rackup
+
+and surf to
+
+	http://your-machine::9292
+
+
+P1 Telegram logger
+====================================
+
+Monitors a Dutch smart meter for enegery and gas consumption. Every measurements is stored as well as aggregated by day and by week. 
+Live power consumption is also provided via redis pub/sub & websockets.
+
+Configuration
+------------------------------
+
+*** USB serial device
+
+To find your USB serial TTY execute the following command
+
+	ls /sys/bus/usb-serial/devices/
+
+This gives you an overview of the connected devices (probably 1). Copy this value and execute
+
+	vim kapture/plugins/p1_plugin.rb
+
+Make sure the `/dev/tty<some-name>` equals the device name you've just copied
+
+
 Required Hardware
-==
+------------------------------
 
 * Rapberry PI or simular
 * FT232 USB Cable Computer Cable [on ebay](http://www.ebay.com/itm/261101529602)
@@ -81,54 +159,3 @@ inspect the `rxd_inverted` property and make sure it is set to 1. If not, execut
 	sudo ./ft232r_prog --invert_rxd
 
 to invert the Rx signal.
-
-
-Installation
-===
-
-Both Kapture & Kultivate are written in Ruby and thus require a working Ruby stack. The software has been tested on the 1.9 branch.
-
-
-Required software
----
-* Ruby 1.9 
-* Bundler
-* Redis
-
-Kapture
----
-
-To install the required gems run the following command 
-
-	bundle install
-
-Start harvesting via
-
-	bundle exed ruby application.rb
-
-*** USB serial device
-
-To find your USB serial TTY execute the following command
-
-	ls /sys/bus/usb-serial/devices/
-
-This gives you an overview of the connected devices (probably 1). Copy this value and execute
-
-	vim kapture/plugins/p1_plugin.rb
-
-Make sure the `/dev/tty<some-name>` equals the device name you've just copied
-
-Kultivate
----
-
-To install the required gems run the following command 
-
-	bundle install
-
-Run
-
-	bundle exed rackup
-
-and surf to
-
-	http://your-machine::9292
