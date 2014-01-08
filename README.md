@@ -108,7 +108,7 @@ Live power consumption is also provided via redis pub/sub & websockets.
 Configuration
 ------------------------------
 
-*** USB serial device
+### USB serial device
 
 To find your USB serial TTY execute the following command
 
