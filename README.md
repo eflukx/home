@@ -70,7 +70,7 @@ Required software
 * Bundler
 * Redis
 
-Kapture
+Installing Kapture
 ---
 
 To install the required gems run the following command 
@@ -81,7 +81,7 @@ Start harvesting via
 
 	bundle exed ruby kapture.rb
 
-Kultivate
+Installing Kultivate
 ---
 
 To install the required gems run the following command 
