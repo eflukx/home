@@ -12,6 +12,7 @@ Project Structure
 
 The project comprises of two components; [Kapture](#kapture), for harvesting data and [Kultivate](#kultivate) for providing insights and querying historical data. Measurements are stored in a [Redis](http://redis.io) database and graphs are rendered using [Highcharts](http://www.highcharts.com/) that are fed via a JSON API hosted by [Sinatra](http://www.sinatrarb.com). 
 
+
 Kapture
 ----------------
 
@@ -29,6 +30,7 @@ On the todo list are:
 * OpenTherm gateway
 
 Please see [developing a Kapture plugin](kapture/docs/plugin_development.md) for more technical information.
+
 
 Kultivate 
 ----------------
