@@ -32,7 +32,7 @@ On the todo list are:
 Please see [developing a Kapture plugin](kapture/docs/plugin_development.md) for more technical information.
 
 
-Kultivate 
+Kultivate
 ----------------
 
 Kultivate is a Sinatra web-app that servers the raw measurement data via JSON. Together with some client-side JavaScript transformation graphs are rendered that show the historic data and the actual power consumption.
@@ -52,7 +52,7 @@ Available Plugins
 
 Please check the documentation of each individual plugin to find out more about it's required hardware and configuration settings.
 
-* [P1 Telegram logger](P1 Telegram logger)
+* [P1 Telegram logger](#p1-telegram-logger)
 
 Enabling plugings
 -----------
