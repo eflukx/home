@@ -4,8 +4,11 @@ module Kultivate
 
 	class Application < Sinatra::Base
 		@@my_app = {}
-		def self.new(*) self < Kultivate ? super : Rack::URLMap.new(@@my_app) end
+		def self.new(*) self < Kultivate::Application ? super : Rack::URLMap.new(@@my_app) end
 		def self.map(url) @@my_app[url] = self end
+
+		enable :sessions
+		use Rack::Flash
 
 		configure do
 			set :public_folder, Proc.new { File.join(root, "static") }

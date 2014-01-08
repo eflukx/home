@@ -39,23 +39,16 @@ $(function() {
 			}
 		];
 
-		_.each(result, function(measurement){
+		var data_map = {
+			"electra_import_low"	:0,
+			"electra_import_normal" :1,
+			"electra_export_low" 	:2,
+			"electra_export_normal" :3
+		};
 
-			var timestamp = measurement.start_timestamp * 1000;
-
-			var electra_import_low 		= measurement.series[0].electra_import_low;
-			var electra_import_normal	= measurement.series[0].electra_import_normal;
-			var electra_export_low		= measurement.series[0].electra_export_low;
-			var electra_export_normal	= measurement.series[0].electra_export_normal;
-			var gas_usage				= measurement.series[2].gas_import;
-
-		 	day_chart_data[0].data.push ([timestamp, electra_import_low] );
-			day_chart_data[1].data.push ([timestamp, electra_import_normal] );
-			day_chart_data[2].data.push ([timestamp, electra_export_low] );
-			day_chart_data[3].data.push ([timestamp, electra_export_normal] );
-			day_chart_data[4].data.push ([measurement.series[2].gas_timestamp * 1000, gas_usage] );
+		_.each(result, function(serie){
+			day_chart_data[data_map[serie.type]].data = serie.data;
 		});
-
 
 		$("#daily_chart").highcharts('StockChart',{
 			chart: {
@@ -118,8 +111,10 @@ $(function() {
 			$("#end-range").text("no data");
 		}
 		else {
-			var start = _.first(result).start_timestamp * 1000;
-			var end   = _.last(result).start_timestamp * 1000;
+			var series = _.first(result);
+
+			var start = _.first(series.data)[0];
+			var end   = _.last(series.data)[1];
 
 			$("#start-range").text(Globalize.format( new Date(start), "F" ));
 			$("#end-range").text(Globalize.format( new Date(end), "F" ));
@@ -134,7 +129,7 @@ $(function() {
 			var from = new Date(range.start).toUTCString();
 			var to   = new Date(range.end).toUTCString();
 
-			$.getJSON('./api/measurement/' + meter_id + '?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
+			$.getJSON('./api/measurements/' + meter_id + '?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
 		}
 		else {
 			$("#parse-warning").fadeIn();
@@ -163,10 +158,9 @@ $(function() {
 			$("#no-data-warning").show();
 		}
 		else {
-			$.getJSON('./api/measurement/' + meter_id, applicationEvents.dailyDataLoaded.dispatch );
+			$.getJSON('./api/measurements/' + meter_id, applicationEvents.dailyDataLoaded.dispatch );
 		}
 
 	}));
-
 
 });

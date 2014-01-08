@@ -25,19 +25,30 @@ module Kultivate
 				from = Time.parse(params[:from] ||= Date.today.to_s)
 				to 	 = Time.parse(params[:to] ||= Date.tomorrow.to_s)
 
-				redis.pipeline do
+				keys = [:electra_import_low, :electra_import_normal,
+						:electra_export_low, :electra_export_normal]
 
-					keys = [:electra_import_low, :electra_import_normal,
-							:electra_export_low, :electra_export_normal,
-							:gas_usage]
+				redis_data = redis.pipelined do
 
-					result = keys.map do |p|
-						redis.zrangebyscore "measurement.raw/#{meter_id}", from.to_i, to.to_i	
+					keys.each do |key|
+						redis.zrangebyscore "#{key}.raw/#{meter_id}", from.to_i, to.to_i	
 					end
-
-					JSON.generate Kultivatr::normalize result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }, group_values = true
-
 				end
+
+				result = keys.map.with_index do |key, index|
+					{
+						:type => key,
+						:data => redis_data[index].map { |e| 
+								r = JSON.parse(e, :symbolize_names => true)
+								[ r[:timestamp] * 1000, r[:value] ]
+						}
+					}
+				end
+
+				JSON.generate result
+
+				#JSON.generate Kultivatr::normalize result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }, group_values = true
+				#JSON.generate result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }
 			end
 
 			# get %r{/measurement/(.*)/by(week|day)} do |meter_id, type|
