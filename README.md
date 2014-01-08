@@ -10,7 +10,7 @@ This project has the aim to provide realtime insight in the energie consumption,
 Project Structure
 ====================================
 
-The project comprises of two components; **kapture**, for harvesting data and **kultivate** for giving insights. Measurement data is stored in a [Redis](http://redis.io) database and graphs are rendered using [Highcharts](http://www.highcharts.com/) that are fed via a JSON API hosted by [Sinatra](http://www.sinatrarb.com). 
+The project comprises of two components; [Kapture](#kapture), for harvesting data and [Kultivate](#kultivate) for providing insights and querying historical data. Measurements are stored in a [Redis](http://redis.io) database and graphs are rendered using [Highcharts](http://www.highcharts.com/) that are fed via a JSON API hosted by [Sinatra](http://www.sinatrarb.com). 
 
 Kapture
 ----------------
