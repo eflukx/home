@@ -149,8 +149,8 @@ connection:
 	
 For more informatio see this article on [gejanssen.com](http://gejanssen.com/howto/Slimme-meter-uitlezen/index.html)
 
-FT232 Signal invert
-----
+### FT232 Signal invert
+
 
 Please keep in mind that the Rx signal sent by the Smart Meter is inverted. You can configure this chip using [ft232r_prog](http://rtr.ca/ft232r/) Execute the following command to check the configuration of you FT232 USB chip.
 
