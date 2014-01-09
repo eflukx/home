@@ -76,10 +76,11 @@ module Kapture
         message = {
           :timestamp  => measurement_data[:timestamp],
           :device_id  => measurement_data[:device_id],
+          :type       => "current_energy_usage",
           :value      => measurement_data[:current_energy_usage]
         }.to_json
 
-        @redis.publish :current_energy_consumption, message
+        @redis.publish :new_measurement, message
       end
 
       #
