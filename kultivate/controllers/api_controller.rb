@@ -15,7 +15,7 @@ module Kultivate
 			get '/sensors' do
 				content_type :json
 
-				keys = redis.keys("*:raw")
+				keys = redis.keys "*:raw"
 
 				JSON.generate keys.map { |key|
 				parts = key.split(':')
@@ -27,12 +27,17 @@ module Kultivate
 				 }.uniq
 			end
 
-			get '/raw/:plugin/:sensor_id/:measurement_series' do |plugin, sensor_id, measurement_series|
+			get '/raw/:plugin/:sensor_id/:measurement_series?' do |plugin, sensor_id, measurement_series|
 
 				content_type :json
 
 				from = Time.parse(params[:from] ||= Date.today.to_s)
 				to 	 = Time.parse(params[:to] ||= Date.tomorrow.to_s)
+
+				# if non of the measurement series where specified, we load the all
+				if measurement_series == nil
+					measurement_series = redis.keys("#{plugin}:#{sensor_id}:*:raw").map{|m| m.split(":")[2]}.join(":")
+				end
 
 				keys = measurement_series.split(':')
 
