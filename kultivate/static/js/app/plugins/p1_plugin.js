@@ -103,7 +103,8 @@ define(function (require) {
 			"electra_import_low"	:0,
 			"electra_import_normal" :1,
 			"electra_export_low" 	:2,
-			"electra_export_normal" :3
+			"electra_export_normal" :3,
+			"gas_usage" 			:4,
 		};
 
 		_.each(result.series, function(serie){
@@ -222,7 +223,7 @@ define(function (require) {
 				websocket.onmessage = function(evt) {
 					var data = JSON.parse(evt.data);
 					var point = chart.series[0].points[0];
-					point.update(parseInt(data.current_power_usage));
+					point.update(parseInt(data.value));
 				};
 			}
 		});
