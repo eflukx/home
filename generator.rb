@@ -16,7 +16,6 @@ class Generator
 		@redis = Redis.new
 	end
 
-
 	def store_p1_measurement(measurement_data)
 
 		time		= Time.at measurement_data[:timestamp]
@@ -28,15 +27,15 @@ class Generator
 
 		data =->(timestamp_key, measurement_key) {
 			{
-				:timestamp  => measurement_data[timestamp_key],
+				:timestamp  => measurement_data[timestamp_key] * 1000,
 				:value      => measurement_data[measurement_key]
 			}.to_json
 		}
 
 		store_measurement =->(key, data){
-			@redis.zadd "#{key}.raw/#{device_id}", raw_key, data
-			@redis.hset "#{key}.byday/#{device_id}", by_day_key, data
-			@redis.hset "#{key}.byweek/#{device_id}", by_week_key, data
+			@redis.zadd "p1:#{device_id}:#{key}:raw", raw_key, data
+			@redis.hset "p1:#{device_id}:#{key}:byday", by_day_key, data
+			@redis.hset "p1:#{device_id}:#{key}:byweek", by_week_key, data
 		}
 
 		@redis.pipelined do
@@ -71,7 +70,7 @@ class Generator
 				:device_id				=> device_id,
 				:electra_import_low		=> (rand 500 unless day_time) || 0,
 				:electra_import_normal 	=> (rand 3000 if day_time) || 0,
-				:electra_export_low 	=> (rand 400 unless day_time) || 0,
+				:electra_export_low 	=> (rand 10 unless day_time) || 0,
 				:electra_export_normal 	=> (rand 2000 if day_time) || 0
 			}
 

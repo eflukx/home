@@ -15,10 +15,10 @@ module Kultivate
 			get '/meters' do
 				content_type :json
 
-				JSON.generate redis.keys("*.raw/*").map { |key| key.split('/').last }.uniq
+				JSON.generate redis.keys("*:raw").map { |key| key.split(':')[1] }.uniq
 			end
 
-			get '/measurements/:meter_id' do |meter_id|
+			get '/measurements/:sensor_id' do |sensor_id|
 
 				content_type :json
 
@@ -29,9 +29,8 @@ module Kultivate
 						:electra_export_low, :electra_export_normal]
 
 				redis_data = redis.pipelined do
-
 					keys.each do |key|
-						redis.zrangebyscore "#{key}.raw/#{meter_id}", from.to_i, to.to_i	
+						redis.zrangebyscore "p1:#{sensor_id}:#{key}:raw", from.to_i, to.to_i	
 					end
 				end
 
@@ -40,15 +39,16 @@ module Kultivate
 						:type => key,
 						:data => redis_data[index].map { |e| 
 								r = JSON.parse(e, :symbolize_names => true)
-								[ r[:timestamp] * 1000, r[:value] ]
+								[ r[:timestamp], r[:value] ]
 						}
 					}
 				end
 
-				JSON.generate result
-
-				#JSON.generate Kultivatr::normalize result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }, group_values = true
-				#JSON.generate result.compact.map{ |e| JSON.parse(e, :symbolize_names => true) }
+				{
+					:start_time => from,
+					:end_time	=> to,
+					:series		=> result
+				}.to_json
 			end
 
 			# get %r{/measurement/(.*)/by(week|day)} do |meter_id, type|

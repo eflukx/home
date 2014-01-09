@@ -43,11 +43,12 @@ keys spaces
 
 key name must following this naming convention:
 
-	<plugin-name>:<measurement-type>:<meter-id>.[raw|byday|byweek|bymonth|]
+	<plugin-name>:<sensor-id>:<measurement-type>:<unit[raw|byday|byweek|]>
 
-example:
+examples:
 
-	p1:electra_import_low:test-device.raw
+	p1:test-device:electra_import_low:raw
+	temp:002:temperature:raw
 
 storage data types
 -------------------

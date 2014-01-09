@@ -1,4 +1,5 @@
-require 'sinatra/base'
+require "sinatra/base"
+require "sass"
 
 module Kultivate
 
@@ -17,7 +18,7 @@ module Kultivate
 		# less style sheet handler
 		get '/css/:style.css' do
 			content_type 'text/css', :charset => 'utf-8'
-			less "less/#{params[:style]}".to_sym
+			scss "sass/#{params[:style]}".to_sym
 		end
 
 		class ApplicationController < Kultivate::Application

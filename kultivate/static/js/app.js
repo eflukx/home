@@ -46,7 +46,7 @@ $(function() {
 			"electra_export_normal" :3
 		};
 
-		_.each(result, function(serie){
+		_.each(result.series, function(serie){
 			day_chart_data[data_map[serie.type]].data = serie.data;
 		});
 
@@ -69,7 +69,7 @@ $(function() {
 				gridLineWidth:0,
 				labels: {
 					formatter: function() {
-						return this.value +'°W';
+						return this.value +'W';
 					},
 					style: {
 						color: '#89A54E'
@@ -111,10 +111,8 @@ $(function() {
 			$("#end-range").text("no data");
 		}
 		else {
-			var series = _.first(result);
-
-			var start = _.first(series.data)[0];
-			var end   = _.last(series.data)[1];
+			var start = result.start_time;
+			var end   = result.end_time;
 
 			$("#start-range").text(Globalize.format( new Date(start), "F" ));
 			$("#end-range").text(Globalize.format( new Date(end), "F" ));

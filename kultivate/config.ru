@@ -1,7 +1,7 @@
 require 'rubygems'
-require 'bundler'
+require 'rack-flash'
+require 'sinatra'
 
-Bundler.require
 require './config/boot'
 
 LiveUpdater.new.start

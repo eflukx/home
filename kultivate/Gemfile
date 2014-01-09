@@ -9,8 +9,7 @@ gem 'em-websocket'
 
 group :development, :test do
 	gem 'rack-test'
-	gem 'less'
-	gem 'therubyracer'
+	gem 'sass'
 	gem 'rspec'
 end
 

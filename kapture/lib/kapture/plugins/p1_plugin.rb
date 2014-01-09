@@ -100,15 +100,15 @@ module Kapture
 
         data =->(timestamp_key, measurement_key) {
          {
-            :timestamp  => measurement_data[timestamp_key],
+            :timestamp  => measurement_data[timestamp_key] * 1000,
             :value      => measurement_data[measurement_key]
           }.to_json
         }
 
         store_measurement =->(key, data){
-            @redis.zadd "#{key}.raw/#{device_id}", raw_key, data
-            @redis.hset "#{key}.byday/#{device_id}", by_day_key, data
-            @redis.hset "#{key}.byweek/#{device_id}", by_week_key, data
+            @redis.zadd "p1:#{device_id}:#{key}:raw", raw_key, data
+            @redis.hset "p1:#{device_id}:#{key}:byday", by_day_key, data
+            @redis.hset "p1:#{device_id}:#{key}:byweek", by_week_key, data
         }
 
         @redis.pipelined do
