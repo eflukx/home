@@ -88,13 +88,14 @@ form {
 	}	
 } 
 
-#date-range{
-	width:60em;	
-}
-
-.date-range-text{
-	font-size:13px;
-	color: #666;
+form[role='date_range']{
+	input {
+		width:60em;	
+	}
+	div{
+		font-size:13px;
+		color: #666;
+	}
 }
 
 
@@ -104,21 +105,22 @@ form {
 
 .widget{
 
+	margin-bottom:1em;
+
 	header[role='heading']{
 		@include inner-shadow(0, -2px, 0px, 0.05);
 
 		color: #333;
 		border: 1px solid #C2C2C2;
 		background: #fafafa;
-		height: 34px;
+		height: 2em;
 		padding: 0;
-		line-height: 40px;
 
 		> h2{
 			height: 100%;
 			width: auto;
 			display: inline-block;
-			font-size: 14px;
+			font-size: 0.9em;
 			position: relative;
 			margin: 0;
 			line-height: 34px;

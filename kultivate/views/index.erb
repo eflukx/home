@@ -1,33 +1,7 @@
-<div class="widget">
+<div class="content">
 
-	<header role="heading">
-		<span class="widget-icon"><i class="fa fa-signal"></i></span>
-		<h2>daily energie usage</h2>
-	</header>
-
-	<div class="widget-toolbar">		
-		<form class="pure-form" id="date-range-form">
-		 	<fieldset>
-				<label class="input"><i class="icon-prepend fa fa-clock-o"></i>
-					<input type="text" id="date-range" placeholder="date range">
-				</label>
-			</fieldset>
-		</form>
-		<div class="date-range-text">showing <span id="start-range"></span> - <span id="end-range"></span></div>
-	</div>
-
-	<div role="content">
-
-		<div id="no-data-warning" class="warning" style="display:none">
-			<p>It seems like there isn't any data in Redis yet. Please check if there are measurement keys and refresh the page.</p>
-		</div>
-
-		<div class="pure-g">
-			<div class="pure-u-5-6"> <div id="daily_chart"></div> </div>
-			<div class="pure-u-1-6"> <div id="gauge_chart"></div> </div>
-		</div>
-
+	<div id="no_data_warning" class='warning' style="display:none" >
+		<p>welcome to the measurement system... If you're seeing this, that means there is no data in the system. Please run <em>generate</em> to fake some or start <em>kapture</em> and come back in a few days.</p>
 	</div>
 
 </div>
-

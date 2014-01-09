@@ -1,0 +1,33 @@
+<div class="widget">
+
+	<header role="heading">
+		<span class="widget-icon"><i class="fa fa-signal"></i></span>
+		<h2>daily energie usage</h2>
+	</header>
+
+	<div class="widget-toolbar">		
+		<form class="pure-form" id="<%= prefix %>_date-range-form" role='date_range'>
+		 	<fieldset>
+				<label class="input"><i class="icon-prepend fa fa-clock-o"></i>
+					<input type="text" id="<%= prefix %>_date-range" placeholder="date range">
+				</label>
+			</fieldset>
+			<div class="date-range-text">showing <span id="<%= prefix %>_start-range"></span> - <span id="<%= prefix %>_end-range"></span></div>
+		</form>
+	</div>
+
+	<div role="content">
+
+		<div id="<%= prefix %>_no-data-warning" class="warning" style="display:none">
+			<p>It seems like there isn't any data in Redis yet. Please check if there are measurement keys and refresh the page.</p>
+		</div>
+
+		<div id="<%= prefix %>_daily_chart"></div>
+<!-- 		<div class="pure-g">
+			<div class="pure-u-5-6">  </div>
+			<div class="pure-u-1-6"> <div id="<%= prefix %>_gauge_chart"></div> </div> 
+		</div>
+ -->
+	</div>
+
+</div>

@@ -1,163 +1,26 @@
-$(function() {
+'use strict'
 
-	'use strict'
+//$.ajaxSetup({cache: false});
 
-	$.ajaxSetup({cache: false});
-
-	var updateDailyChart = function(result) {
-
-		var day_chart_data = [
-			{
-				name: 'verbruik laag tarief',
-				type: 'areaspline',
-				yAxis: 0,
-				data: []
-			},
-			{
-				name: 'verbruik normaal tarief',
-				type: 'areaspline',
-				yAxis: 0,
-				data: []
-			},
-			{
-				name: 'teruglevering laag tarief',
-				type: 'areaspline',
-				yAxis: 0,
-				data: []
-			},
-			{
-				name: 'teruglevering normaal tarief',
-				type: 'areaspline',
-				yAxis: 0,
-				data: []
-			},
-			{
-				name: 'gas verbruik',
-				type: 'column',
-				yAxis: 1,
-				data: []
-			}
-		];
-
-		var data_map = {
-			"electra_import_low"	:0,
-			"electra_import_normal" :1,
-			"electra_export_low" 	:2,
-			"electra_export_normal" :3
-		};
-
-		_.each(result.series, function(serie){
-			day_chart_data[data_map[serie.type]].data = serie.data;
-		});
-
-		$("#daily_chart").highcharts('StockChart',{
-			chart: {
-				style: {
-					fontFamily: '"Open Sans",Arial,Helvetica,Sans-Serif'
-				}
-			},
-			colors:[
-					'#6baed6',
-					'#4292c6',
-					'#2171b5',
-					'#08519c',
-					'#08306b'
-			],
-			scrollbar:{enabled:false},
-			rangeSelector:{enabled:false},
-			yAxis: [{ 
-				gridLineWidth:0,
-				labels: {
-					formatter: function() {
-						return this.value +'W';
-					},
-					style: {
-						color: '#89A54E'
-					}
-				},
-				title: {
-					text: 'Electricity usage',
-					style: {
-						color: '#89A54E'
-					}
-				}
-				}, {
-				gridLineColor: 'rgba(0,0,0,0.05)',
-				opposite: true,
-				title: {
-					text: 'Gas usage',
-					style: {
-						color: '#4572A7'
-					}
-				},
-			}],
-			plotOptions:{
-				series:{
-					marker:{
-						enabled:false
-					}
-				}
-			},				
-			credits: {
-				enabled:false
-			},			
-			series : day_chart_data
-		});
-	};
-
-	var updateDateRange = function(result){
-
-		if(result === undefined || $.isArray(result) && result.length == 0){
-			$("#end-range").text("no data");
-		}
-		else {
-			var start = moment(result.start_time);
-			var end   = moment(result.end_time);
-
-			$("#start-range").text(start.format("dddd, MMMM Do YYYY, H:mm:ss"));
-			$("#end-range").text(end.format("dddd, MMMM Do YYYY, H:mm:ss"));
+requirejs.config({
+	baseUrl: "js/lib",
+	paths: {
+		"app": "../app",
+		"jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min",
+		"highstock": "highcharts/highcharts-more",
+		"highstock.base": "highcharts/highstock",
+		"underscore": "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min",
+		"moment": "moment.min",
+	},
+	shim: {
+		"highstock": {
+			deps: [ "jquery", "highstock.base"],
+			exports: "Highcharts"
+		},
+		"underscore":{
+			exports: "_"
 		}
 	}
-
-	var updateChartWithNewRange = function(){
-
-		var range = window.dateRangeParser.parse($("#date-range").val());
-
-		if(range) {
-			var from = new Date(range.start).toUTCString();
-			var to   = new Date(range.end).toUTCString();
-
-			$.getJSON('./api/measurements/' + meter_id + '?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
-		}
-		else {
-			$("#parse-warning").fadeIn();
-		}
-	}
-
-	$("#date-range-form").submit(function(e){
-		e.preventDefault();
-		updateChartWithNewRange();
-	});
-
-	var meter_id;
-
-	var applicationEvents = {
-	  dailyDataLoaded : new signals.Signal()
-	};
-
-	applicationEvents.dailyDataLoaded.add(updateDailyChart);
-	applicationEvents.dailyDataLoaded.add(updateDateRange);
-
-	$.when( $.getJSON('./api/sensors' ).then( function( sensors ) {
-
-		if(!sensors){
-			$("#no-data-warning").show();
-		}
-		else {
-			var sensor = _.first(sensors);
-			$.getJSON('./api/raw/' +  sensor.plugin +'/' + sensor.id + '/' + sensor.series.join(":"), applicationEvents.dailyDataLoaded.dispatch );
-		}
-
-	}));
-
 });
+
+requirejs(["app/main"]);

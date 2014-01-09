@@ -42,21 +42,19 @@ module Kultivate
 					end
 				end
 
-				result = keys.map.with_index do |key, index|
-					{
-						:type => key,
-						:data => redis_data[index].map { |e| 
-								r = JSON.parse(e, :symbolize_names => true)
-								[ r[:timestamp], r[:value] ]
-						}
-					}
-				end
+				from_json = Proc.new { |str| JSON.parse(str).values }
 
 				{
-					:start_time => from,
-					:end_time	=> to,
-					:series		=> result
+					:start_time => 	from,
+					:end_time	=> 	to,
+					:series		=> 	keys.map.with_index { |key, index|
+										{
+											:measurement_type => key,
+											:data => redis_data[index].map(&from_json)
+										}
+									}
 				}.to_json
+
 			end
 
 			# get %r{/measurement/(.*)/by(week|day)} do |meter_id, type|
