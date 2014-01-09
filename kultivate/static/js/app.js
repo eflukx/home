@@ -148,15 +148,14 @@ $(function() {
 	applicationEvents.dailyDataLoaded.add(updateDailyChart);
 	applicationEvents.dailyDataLoaded.add(updateDateRange);
 
-	$.when( $.getJSON('./api/meters' ).then( function( data ) {
+	$.when( $.getJSON('./api/sensors' ).then( function( sensors ) {
 
-		meter_id = _.last(data);
-
-		if(!meter_id){
+		if(!sensors){
 			$("#no-data-warning").show();
 		}
 		else {
-			$.getJSON('./api/measurements/' + meter_id, applicationEvents.dailyDataLoaded.dispatch );
+			var sensor = _.first(sensors);
+			$.getJSON('./api/raw/' +  sensor.plugin +'/' + sensor.id + '/' + sensor.series.join(":"), applicationEvents.dailyDataLoaded.dispatch );
 		}
 
 	}));

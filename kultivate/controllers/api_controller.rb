@@ -12,25 +12,33 @@ module Kultivate
 
 			redis = Redis.new
 
-			get '/meters' do
+			get '/sensors' do
 				content_type :json
 
-				JSON.generate redis.keys("*:raw").map { |key| key.split(':')[1] }.uniq
+				keys = redis.keys("*:raw")
+
+				JSON.generate keys.map { |key|
+				parts = key.split(':')
+					{
+						:plugin => parts[0],
+						:id 	=> parts[1],
+						:series	=> keys.select{|key| key.starts_with? "#{parts[0]}:#{parts[1]}"}.map{|m| m.split(":")[2]}
+					}
+				 }.uniq
 			end
 
-			get '/measurements/:sensor_id' do |sensor_id|
+			get '/raw/:plugin/:sensor_id/:measurement_series' do |plugin, sensor_id, measurement_series|
 
 				content_type :json
 
 				from = Time.parse(params[:from] ||= Date.today.to_s)
 				to 	 = Time.parse(params[:to] ||= Date.tomorrow.to_s)
 
-				keys = [:electra_import_low, :electra_import_normal,
-						:electra_export_low, :electra_export_normal]
+				keys = measurement_series.split(':')
 
 				redis_data = redis.pipelined do
 					keys.each do |key|
-						redis.zrangebyscore "p1:#{sensor_id}:#{key}:raw", from.to_i, to.to_i	
+						redis.zrangebyscore "#{plugin}:#{sensor_id}:#{key}:raw", from.to_i, to.to_i	
 					end
 				end
 
