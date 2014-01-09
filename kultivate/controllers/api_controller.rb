@@ -50,6 +50,8 @@ module Kultivate
 				from_json = Proc.new { |str| JSON.parse(str).values }
 
 				{
+					:plugin		=>	plugin,
+					:sensor_id	=>	sensor_id,
 					:start_time => 	from,
 					:end_time	=> 	to,
 					:series		=> 	keys.map.with_index { |key, index|
