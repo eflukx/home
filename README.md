@@ -81,7 +81,14 @@ To install the required gems run the following command
 
 Start harvesting via
 
-	bundle exed ruby kapture.rb
+	bundle exec lib/kapture
+
+Or, alternativly, create a gem file and install this.
+
+	gem build kapture.gemspec
+	gem install kapture-0.0.1.gem
+
+> Please also install the ParseP1 gem from [http://github.com/enix/ParseP1](http://github.com/enix/ParseP1)
 
 Installing Kultivate
 ---
@@ -92,7 +99,7 @@ To install the required gems run the following command
 
 Run
 
-	bundle exed rackup
+	bundle exec rackup
 
 and surf to
 
