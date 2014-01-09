@@ -111,11 +111,11 @@ $(function() {
 			$("#end-range").text("no data");
 		}
 		else {
-			var start = result.start_time;
-			var end   = result.end_time;
+			var start = moment(result.start_time);
+			var end   = moment(result.end_time);
 
-			$("#start-range").text(Globalize.format( new Date(start), "F" ));
-			$("#end-range").text(Globalize.format( new Date(end), "F" ));
+			$("#start-range").text(start.format("dddd, MMMM Do YYYY, H:mm:ss"));
+			$("#end-range").text(end.format("dddd, MMMM Do YYYY, H:mm:ss"));
 		}
 	}
 
