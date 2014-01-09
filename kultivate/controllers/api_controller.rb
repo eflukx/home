@@ -27,7 +27,7 @@ module Kultivate
 				 }.uniq
 			end
 
-			get '/raw/:plugin/:sensor_id/:measurement_series?' do |plugin, sensor_id, measurement_series|
+			get '/raw/:plugin/:sensor_id/?:measurement_series?' do |plugin, sensor_id, measurement_series|
 
 				content_type :json
 

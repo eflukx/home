@@ -5,6 +5,7 @@ define(function (require) {
         _ = require('underscore'),
         c = require('highstock'),
         rnd = require('random'),
+        rangeParser = require('date-range-parser'),
         moment = require('moment'),
         template = require('text!/tmpl/parse_p1.html');
 
@@ -41,7 +42,7 @@ define(function (require) {
 		}
 	];
 
-	var updateDailyChart = function(result) {
+	var createDailyChart = function(result) {
 
  		var chart = new Highcharts.StockChart({
 			chart: {
@@ -113,18 +114,20 @@ define(function (require) {
 
 	var updateChartWithNewRange = function(){
 
-	  	var range = window.dateRangeParser.parse($("#"+ options.prefix +"_range").val());
+	  	var range = rangeParser.parse($("#"+ options.prefix +"_date_range").val());
 
-		if(range) {
+		if(range && range.start && range.end) {
+			
 			var from = new Date(range.start).toUTCString();
 			var to   = new Date(range.end).toUTCString();
 
-			alert("sorry, doesn't work yet");
-
-			//$.getJSON('./api/raw/p1/' + meter_id + '?from='+ from +'&to='+ to, applicationEvents.dailyDataLoaded.dispatch);
+			$.getJSON('./api/raw/' + options.plugin + '/' + options.sensor_id + '?from='+ from +'&to='+ to, function(result){
+				createDailyChart(result);
+				updateDateRange(result);
+			});
 		}
 		else {
-			$("#"+ options.prefix +"parse-warning").fadeIn();
+			$("#"+ options.prefix +"_parse_warning").fadeIn().delay(2000).fadeOut();
 		}
 	}
 
@@ -144,11 +147,16 @@ define(function (require) {
 	}
 
 	var options = {
-		prefix : rnd(4)
-	}
+		prefix : rnd(4),
+		sensor_id : null,
+		plugin: null
+	};
 
 	return {
 		handle:function (result) {
+
+			options.plugin = result.plugin;
+			options.sensor_id = result.sensor_id;
 
 			$(_.template(template, options)).appendTo('.content');
 
@@ -158,7 +166,7 @@ define(function (require) {
 			});
 
 			updateDateRange(result);
-			updateDailyChart(result);
+			createDailyChart(result);
 		}
 	}
 

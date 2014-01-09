@@ -4,6 +4,8 @@ define(function (require) {
     var $ = require('jquery'),
         _ = require('underscore');
       	
+     $.ajaxSetup({ cache: false });
+
 	$.when( $.getJSON('./api/sensors' ).then( function( sensors ) {
 
 			if(!sensors || $.isArray(sensors) && sensors.length === 0){

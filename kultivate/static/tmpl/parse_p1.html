@@ -9,18 +9,17 @@
 		<form class="pure-form" id="<%= prefix %>_date-range-form" role='date_range'>
 		 	<fieldset>
 				<label class="input"><i class="icon-prepend fa fa-clock-o"></i>
-					<input type="text" id="<%= prefix %>_date-range" placeholder="date range">
+					<input type="text" id="<%= prefix %>_date_range" placeholder="date range">
 				</label>
 			</fieldset>
 			<div class="date-range-text">showing <span id="<%= prefix %>_start-range"></span> - <span id="<%= prefix %>_end-range"></span></div>
 		</form>
+		<div id="<%= prefix %>_parse_warning" class="warning" style="display:none">
+			<p>no clue how to parse that</p>
+		</div>		
 	</div>
 
 	<div role="content">
-
-		<div id="<%= prefix %>_no-data-warning" class="warning" style="display:none">
-			<p>It seems like there isn't any data in Redis yet. Please check if there are measurement keys and refresh the page.</p>
-		</div>
 
 		<div id="<%= prefix %>_daily_chart"></div>
 <!-- 		<div class="pure-g">

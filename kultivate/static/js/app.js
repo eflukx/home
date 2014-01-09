@@ -19,6 +19,9 @@ requirejs.config({
 		},
 		"underscore":{
 			exports: "_"
+		},
+		"date-range-parser":{
+			exports: "dateRangeParser"
 		}
 	}
 });
