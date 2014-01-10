@@ -4,7 +4,6 @@ gem 'sinatra', :require => 'sinatra/base'
 gem 'rack-flash3', :require => 'rack-flash'
 gem 'redis'
 gem 'activesupport'
-gem 'time_difference'
 gem 'em-websocket'
 
 group :development, :test do

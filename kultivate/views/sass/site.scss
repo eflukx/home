@@ -1,11 +1,21 @@
 @import "elements";
 
 body{
-	font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
+	font-family: 'Roboto', sans-serif;
+}
+
+h1,h2,h3{
+	font-family: 'Lato', sans-serif;
 }
 
 .content {
-	padding: 2em 3em 0;
+	padding: 0 3em 0;
+}
+
+header{
+	h1{
+		@include drop-shadow($x-axis: 0, $y-axis: 1px, $blur: 1px, $spread:-1px, $alpha: 0.4);
+	}
 }
 
 #daily_chart{

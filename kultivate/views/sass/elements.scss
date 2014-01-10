@@ -9,3 +9,9 @@
 	-moz-box-shadow: inset $horizontal $vertical $blur rgba(0, 0, 0, $alpha);
 	box-shadow: inset $horizontal $vertical $blur rgba(0, 0, 0, $alpha);
 }
+
+@mixin drop-shadow($x-axis: 0, $y-axis: 1px, $blur: 1px, $spread:0px, $alpha: 0.4) {
+  -webkit-box-shadow: $x-axis $y-axis $blur $spread rgba(0, 0, 0, $alpha);
+  -moz-box-shadow: $x-axis $y-axis $blur $spread rgba(0, 0, 0, $alpha);
+  box-shadow: $x-axis $y-axis $blur $spread rgba(0, 0, 0, $alpha);
+}
