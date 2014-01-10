@@ -4,6 +4,8 @@ module Kapture
   require 'active_support/core_ext/hash'
   require 'serialport'
   require 'parse_p1'
+  require 'time_difference'
+  require 'eventmachine'
 
   module Plugins
 
@@ -11,10 +13,18 @@ module Kapture
 
       include Logging
 
+      attr_reader :config
       attr_reader :redis
 
       def initialize
         @redis = Redis.new
+
+        config_file = File.dirname(__FILE__) + '/../../../config/p1_plugin.yml'
+        @config = YAML::load(File.open(config_file))
+      end
+
+      def p1_reader
+        @p1_reader ||= SerialPort.new(@config["serial_device"], 9600, 7, 1, SerialPort::EVEN)
       end
 
       #
@@ -23,52 +33,60 @@ module Kapture
       def go!
 
           logger.info "starting p1 data logger"
+          logger.info "config: #{@config}"
 
-          serial_device = "/dev/ttyUSB0" 
-          ser = SerialPort.new(serial_device, 9600, 7, 1, SerialPort::EVEN)
+          EventMachine.run {
 
-          logger.info "p1 plugin is listening to #{serial_device}"
+            telegram = wait_for_telegram
+            handle_new_telegram telegram
 
-          buffer = []
-          reading_telegram = false
-          while true  
-            c = ser.getc
-            
-            if c == '/' 
-              buffer = []
-              reading_telegram = true
-            end
+          }
 
-            buffer << c if reading_telegram and c != nil
+          puts "shutting down"
 
-            if c == '!' and reading_telegram
-              reading_telegram = false
-
-              p1_telegram_data = buffer.join
-              buffer = []
-
-              handle_new_measurement p1_telegram_data
-            end
-          end
       end
 
       private 
 
+      def wait_for_telegram
+
+          buffer = nil
+
+          while true  
+            c = p1_reader.getc
+            
+            if c == '/' 
+              buffer = []
+            end
+
+            buffer << c unless buffer == nil or c == nil
+
+            if c == '!' and buffer != nil
+              return buffer.join
+            end
+          end
+
+      end
+
       #
       # store & publish the new P1 readout 
       # 
-      def handle_new_measurement(p1_telegram_data)
-
+      def handle_new_telegram(p1_telegram_data)
         logger.debug "received a new p1 telegram"
-        logger.debug "#{p1_telegram_data}"
-        
+
         map = get_measurement_map p1_telegram_data
+        if(map == nil or valid?(map) == false)
+          logger.warn "invalid telegram received #{p1_telegram_data}"
+          return
+        end
 
-        publish_current_energy_consumption map unless map == nil
-
-        store_new_measurement map.except :current_power_usage unless map == nil
+        publish_current_energy_consumption map
+        store_new_measurement map
       end
 
+      #
+      # publish a message with the current energy consumption
+      #
       def publish_current_energy_consumption(measurement_data)
 
         logger.debug "publishing current energy consumption"
@@ -84,67 +102,111 @@ module Kapture
       end
 
       #
-      # store the measurement in the redis db
+      # Check if there is a previous measurment
+      # and calculate the delta between them 
       #
-      def store_new_measurement(measurement_data)
+      def store_new_measurement(current_measurement)
+
+        if @previous_measurement == nil
+          @previous_measurement = current_measurement
+          return
+        end
+
+        delta = calculate_delta @previous_measurement, current_measurement
+        save_measurement_to_redis delta
+
+        @previous_measurement = current_measurement
+      end
+
+      #
+      # calculate the delta in Watt between two measurements in kWh
+      #
+      def calculate_delta(previous, current)
+
+        kwh_to_watts = 1 / (TimeDifference.between(previous[:timestamp], current[:timestamp]).in_seconds / 3600) * 1000
+
+        delta =->(member) { 
+         a = current[member]
+         b = previous[member]
+         return (a - b) unless a == nil or b == nil
+        }
+
+        measurement = {
+          :timestamp             => current[:timestamp],
+          :device_id             => current[:device_id],
+          :electra_import_low    => delta.(:electra_import_low) * kwh_to_watts,
+          :electra_import_normal => delta.(:electra_import_normal) * kwh_to_watts,
+          :electra_export_low    => delta.(:electra_export_low) * kwh_to_watts,
+          :electra_export_normal => delta.(:electra_export_normal) * kwh_to_watts
+        }
+
+      end
+
+      #
+      # store the (delta) measurement in redis
+      #
+      def save_measurement_to_redis(measurement_data)
 
         raise "invalid measurement data" if !valid? measurement_data
 
         logger.debug "storing measurement in redis"
 
-        time      = Time.at measurement_data[:timestamp]
-        device_id = measurement_data[:device_id]
-
-        raw_key     = time.to_i
-        by_week_key = time.strftime("%Y/%V")
-        by_day_key  = time.strftime("%Y/%j")
-
-        data =->(timestamp_key, measurement_key) {
+        data =->(measurement_key) {
          {
-            :timestamp  => measurement_data[timestamp_key] * 1000,
+            :timestamp  => measurement_data[:timestamp] * 1000,
             :value      => measurement_data[measurement_key]
           }.to_json
         }
 
-        store_measurement =->(key, data){
-            @redis.zadd "p1:#{device_id}:#{key}:raw", raw_key, data
-            @redis.hset "p1:#{device_id}:#{key}:byday", by_day_key, data
-            @redis.hset "p1:#{device_id}:#{key}:byweek", by_week_key, data
-        }
+        device_id = measurement_data[:device_id]
 
         @redis.pipelined do
+
+          #
+          # store energy measuments
+          #
+
+          score = measurement_data[:timestamp]
           keys = [:electra_import_low, :electra_import_normal,
                   :electra_export_low, :electra_export_normal]
-          keys.map{|e| store_measurement.(e, data.(:timestamp,e))}
+          
+          keys.each do |key| 
+            result = data.(key)
+            
+            logger.debug "storing #{key} -> #{result}"
+            @redis.zadd "p1:#{device_id}:#{key}:raw", score, result
+          end
 
-          store_measurement.(:gas_usage, data.(:gas_timestamp,:gas_usage))          
         end
 
       end
+
+ #         @redis.hset "p1:#{measurement_data[:gas_device_id]}:#{key}:byday", by_day_key, data.(:timestamp, key)
+ #         @redis.hset "p1:#{measurement_data[:gas_device_id]}:#{key}:byweek", by_week_key, data.(:timestamp, key)
+
 
       #
       # convert the P1 telegram to a simple map
       # 
       def get_measurement_map(p1_telegram_data)
 
-        timestamp = Time.now.to_i
-
         p1 = ParseP1::Base.new p1_telegram_data
-        return nil if !p1.valid? 
 
-        map = {
-          :timestamp              => timestamp,
+        if(!p1.valid?)
+          logger.warn "invalid telegram found #{p1_telegram_data}}"
+          return nil
+        end
+
+        {
+          :timestamp              => Time.now.to_i,
           :device_id              => p1.device_id,
           :electra_import_low     => p1.electra_import_low,
           :electra_import_normal  => p1.electra_import_normal,
           :electra_export_low     => p1.electra_export_low,
           :electra_export_normal  => p1.electra_export_normal,
-          :current_energy_usage   => p1.actual_electra,
-          :gas_usage              => p1.gas_usage,
-          :gas_timestamp          => (p1.last_hourly_reading_gas.to_time - 3600).to_i
+          :current_energy_usage   => p1.actual_electra
         } 
 
-        map if valid? map
       end
 
       #
@@ -156,8 +218,7 @@ module Kapture
         map[:electra_import_low] != nil and
         map[:electra_import_normal] != nil and 
         map[:electra_export_low] != nil and
-        map[:electra_export_normal] != nil and
-        map[:gas_usage] != nil
+        map[:electra_export_normal] != nil
       end
 
     end

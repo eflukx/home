@@ -5,6 +5,8 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 module Kapture
 
+	require 'yaml'
+	
 	require 'logger'
 	require 'kapture/lib/plugin'
 	require 'kapture/lib/logging'
