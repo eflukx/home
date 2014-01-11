@@ -146,7 +146,7 @@ class Generator
 	def generate()
 
 		generate_p1_data
-		generate_temperature_data
+		#generate_temperature_data
 
 	end
 end

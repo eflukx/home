@@ -4,7 +4,7 @@ body{
 	font-family: 'Roboto', sans-serif;
 }
 
-h1,h2,h3{
+h1,h2,h3,h4,h5{
 	font-family: 'Lato', sans-serif;
 }
 
@@ -13,8 +13,58 @@ h1,h2,h3{
 }
 
 header{
+	@include drop-shadow($x-axis: 0, $y-axis: 1px, $blur: 1px, $spread:-1px, $alpha: 0.4);
 	h1{
-		@include drop-shadow($x-axis: 0, $y-axis: 1px, $blur: 1px, $spread:-1px, $alpha: 0.4);
+		display:inline-block;
+	}
+	.sparkles{
+		float:right;
+		margin-top: 0.67em;
+//		margin-after: 0.67em;
+
+		#sparks{
+			list-style: none;
+			//margin: 10px 0 0;
+			text-align: right;
+
+			.sparks-info {
+				min-width: 70px;
+			}
+
+			li:first-child {
+				border-left: 0;
+				padding-left: 0;
+			}
+			li {
+				border-left: 1px dotted #c7c7c7;
+				padding: 0 10px;
+				display: inline-block;
+				max-height: 47px;
+				text-align: left;
+
+				h5{
+					color: #555;
+					float: left;
+					font-size: 11px;
+					font-weight: 400;
+					margin: -3px 0 0 0;
+					text-transform: uppercase;
+
+					span{
+						display: block;
+						font-size: 18px;
+						line-height: 20px;
+					}
+				}
+
+				div{
+					color:#57889c;
+					float: right;
+					margin: 3px 0 0 20px;
+				}
+
+			}
+		}
 	}
 }
 

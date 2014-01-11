@@ -11,6 +11,7 @@ requirejs.config({
 		"highstock.base": "highcharts/highstock",
 		"underscore": "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min",
 		"moment": "moment.min",
+		"sparkline":"jquery.sparkline.min"
 	},
 	shim: {
 		"highstock": {

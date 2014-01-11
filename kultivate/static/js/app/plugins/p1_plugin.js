@@ -229,7 +229,6 @@ define(function (require) {
 		});
 	};
 
-
 	var updateChartWithNewRange = function(){
 
 	  	var range = rangeParser.parse($("#"+ options.prefix +"_date_range").val());
@@ -283,7 +282,7 @@ define(function (require) {
 				updateChartWithNewRange();
 			});
 
-			createGaugeChart();
+			//createGaugeChart();
 			updateDateRange(result);
 			createDailyChart(result);
 		}
