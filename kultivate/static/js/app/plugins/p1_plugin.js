@@ -123,7 +123,11 @@ define(function (require) {
 			$("#current_power_consumption").text(data.value + "W");
 
 			last_measurements.push(data.value);
-			last_measurements = _.take(last_measurements, 10);
+
+			if(last_measurements > 20){
+				last_measurements = _.rest(last_measurements,1);
+			}
+			
 			$("#power_usage").sparkline(last_measurements, {
 				type: 'bar',
 				barColor: "#57889c",
