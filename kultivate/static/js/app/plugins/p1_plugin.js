@@ -5,6 +5,7 @@ define(function (require) {
         _ = require('underscore'),
         c = require('highstock'),
         rnd = require('random'),
+        s = require('sparkline'),
         rangeParser = require('date-range-parser'),
         moment = require('moment'),
         template = require('text!/tmpl/parse_p1.html');
@@ -123,7 +124,7 @@ define(function (require) {
 
 			last_measurements.push(data.value);
 			last_measurements = _.take(last_measurements, 10);
-			("#power_usage").sparkline(last_measurements, {
+			$("#power_usage").sparkline(last_measurements, {
 				type: 'bar',
 				barColor: "#57889c",
 				height: "26px",
