@@ -30,7 +30,7 @@ module Kapture
 		$LOAD_PATH.unshift(dir)
 		plugins = (Dir[File.join(dir, '*.rb')])
 		plugins = plugins.select{ |e| !e.end_with? "measurement_plugin.rb" } 
-		Logging::logger.info "found #{plugins.length} plugins"
+		Logging::logger.info "found #{plugins.length} plugin(s)"
 
 		plugins.each {|file| require File.basename(file) }
 	end
