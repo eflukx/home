@@ -124,10 +124,10 @@ define(function (require) {
 
 			last_measurements.push(data.value);
 
-			if(last_measurements > 20){
+			if(last_measurements.length > 20){
 				last_measurements = _.rest(last_measurements,1);
 			}
-			
+
 			$("#power_usage").sparkline(last_measurements, {
 				type: 'bar',
 				barColor: "#57889c",
