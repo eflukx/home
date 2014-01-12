@@ -9,6 +9,7 @@ module Kapture
 	require 'active_support/core_ext/hash'
 
 	require 'logger'
+	require 'kapture/version'
 	require 'kapture/lib/plugin'
 	require 'kapture/lib/logging'
 	require 'kapture/plugins/measurement_plugin'
@@ -73,5 +74,23 @@ end
 
 Thread.abort_on_exception=true 
 
-Kapture::Logging::logger.level = Logger::INFO
+require 'trollop'
+
+opts = Trollop::options do
+  version "Kapture #{Kapture::VERSION} (c) 2014 Ernst Naezer"
+  banner <<-EOS
+Kapture hosts a set of measurement plugins that harvest data with the aim to provide realtime insight
+in the energie consumption, solar production and the use of other natural resources in the home environment.
+
+Usage:
+       kapture [options] 
+where [options] are:
+EOS
+
+  opt :debug, "Set logging to Debug level"
+end
+
+Kapture::Logging::logger.level = opts[:debug] ? Logger::DEBUG : Logger::INFO  
+Kapture::Logging::logger.debug "hurray debug mode!"
+
 Kapture::run!
