@@ -190,7 +190,7 @@ define(function (require) {
 				updateChartWithNewRange();
 			});
 
-			//createGaugeChart();
+			installLiveListener();
 			updateDateRange(result);
 			createDailyChart(result);
 		}
