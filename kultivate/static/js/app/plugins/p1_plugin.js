@@ -114,7 +114,7 @@ define(function (require) {
 		});
 	};
 
-	var last_measurements = [];
+	var last_measurements = [0];
 
 	var installLiveListener = function(){
 		var websocket = new WebSocket("ws://" + window.location.hostname + ":8081");
