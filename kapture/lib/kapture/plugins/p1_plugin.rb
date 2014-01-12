@@ -32,12 +32,12 @@ module Kapture
           logger.info "starting p1 data logger"
           logger.info "config: #{@config}"
 
-          EventMachine::run {
+          while true
 
             telegram = wait_for_telegram
             handle_new_telegram telegram
 
-          }
+          end
 
           logger.info "p1 is shutting down"
       end
