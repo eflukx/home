@@ -5,8 +5,9 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 module Kapture
 
-	require 'yaml'
-	
+	require 'eventmachine'
+	require 'active_support/core_ext/hash'
+
 	require 'logger'
 	require 'kapture/lib/plugin'
 	require 'kapture/lib/logging'
@@ -26,7 +27,8 @@ module Kapture
 		Logging::logger.info "plugin folder #{dir}"
 
 		$LOAD_PATH.unshift(dir)
-		plugins = Dir[File.join(dir, '*.rb')]
+		plugins = (Dir[File.join(dir, '*.rb')])
+		plugins = plugins.select{ |e| !e.end_with? "measurement_plugin.rb" } 
 		Logging::logger.info "found #{plugins.length} plugins"
 
 		plugins.each {|file| require File.basename(file) }
@@ -57,11 +59,11 @@ module Kapture
 	
 		Logging::logger.info "Kapture has started, now we play the waiting game..."
 
-		running = true
-		trap("SIGINT") { running = false }
+		trap("SIGINT") { EventMachine::stop_event_loop }
 
-		while running
-		end
+		EventMachine::run{
+
+		}
 
 		Logging::logger.info "Kapture has won"
 
