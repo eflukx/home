@@ -10,34 +10,34 @@ define(function (require) {
         moment = require('moment'),
         template = require('text!/tmpl/parse_p1.html');
 
-	var day_chart_data = [
-		{
-			name: 'verbruik laag tarief',
-			type: 'areaspline',
-			yAxis: 0,
-			data: []
-		},
-		{
-			name: 'verbruik normaal tarief',
-			type: 'areaspline',
-			yAxis: 0,
-			data: []
-		},
-		{
-			name: 'teruglevering laag tarief',
-			type: 'areaspline',
-			yAxis: 0,
-			data: []
-		},
-		{
-			name: 'teruglevering normaal tarief',
-			type: 'areaspline',
-			yAxis: 0,
-			data: []
-		}
-	];
-
 	var createDailyChart = function(result) {
+
+		var day_chart_data = [
+			{
+				name: 'verbruik laag tarief',
+				type: 'areaspline',
+				yAxis: 0,
+				data: _.find(result.series, function(serie){serie.measurement_type === "electra_import_low"}).data
+			},
+			{
+				name: 'verbruik normaal tarief',
+				type: 'areaspline',
+				yAxis: 0,
+				data: _.find(result.series, function(serie){serie.measurement_type === "electra_import_normal"}).data
+			},
+			{
+				name: 'teruglevering laag tarief',
+				type: 'areaspline',
+				yAxis: 0,
+				data: _.find(result.series, function(serie){serie.measurement_type === "electra_export_low"}).data
+			},
+			{
+				name: 'teruglevering normaal tarief',
+				type: 'areaspline',
+				yAxis: 0,
+				data: _.find(result.series, function(serie){serie.measurement_type === "electra_export_normal"}).data
+			}
+		];
 
  		var chart = new Highcharts.StockChart({
 			chart: {
@@ -83,18 +83,6 @@ define(function (require) {
 			credits: {
 				enabled:false
 			},			
-		});
-
-		var data_map = {
-			"electra_import_low"	:0,
-			"electra_import_normal" :1,
-			"electra_export_low" 	:2,
-			"electra_export_normal" :3
-		};
-
-		_.each(result.series, function(serie){
-			day_chart_data[data_map[serie.measurement_type]].data = serie.data 
-			chart.addSeries ( day_chart_data[data_map[serie.measurement_type]] );
 		});
 	};
 
