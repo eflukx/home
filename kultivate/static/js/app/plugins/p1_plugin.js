@@ -82,7 +82,8 @@ define(function (require) {
 			},				
 			credits: {
 				enabled:false
-			},			
+			},
+			series = day_chart_data
 		});
 	};
 
