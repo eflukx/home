@@ -11,10 +11,8 @@ module Kapture
 	module Plugins
 
 		class EmptyPlugin < MeasurementPlugin
-
+			require 'eventmachine'
 			include Logging
-
-			attr_reader :redis
 
 			def initialize
 				@redis = Redis.new
@@ -24,7 +22,7 @@ module Kapture
 			# start watching doing something
 			#
 			def go!
-				while(true)
+				EventMachine::run do
 
 					# take some measurment and store this in the database
 
