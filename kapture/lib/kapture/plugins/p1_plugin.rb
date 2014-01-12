@@ -13,9 +13,6 @@ module Kapture
 
       include Logging
 
-      attr_reader :config
-      attr_reader :redis
-
       def initialize
         @redis = Redis.new
 
@@ -35,15 +32,14 @@ module Kapture
           logger.info "starting p1 data logger"
           logger.info "config: #{@config}"
 
-          EventMachine.run {
+          EventMachine::run {
 
             telegram = wait_for_telegram
             handle_new_telegram telegram
 
           }
 
-          puts "shutting down"
-
+          logger.info "p1 is shutting down"
       end
 
       private 
