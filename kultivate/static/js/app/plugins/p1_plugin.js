@@ -132,8 +132,8 @@ define(function (require) {
 				type: 'bar',
 				barColor: "#57889c",
 				height: "26px",
-//				barWidth: sparklineBarWidth,
-//				barSpacing: sparklineBarSpacing,
+				barWidth: 5,
+				barSpacing: 2,
 //				stackedBarColor: sparklineStackedColor,
 //				negBarColor: sparklineNegBarColor,
 				zeroAxis: 'false'
