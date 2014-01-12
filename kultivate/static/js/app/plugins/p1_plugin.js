@@ -34,12 +34,6 @@ define(function (require) {
 			type: 'areaspline',
 			yAxis: 0,
 			data: []
-		},
-		{
-			name: 'gas verbruik',
-			type: 'column',
-			yAxis: 1,
-			data: []
 		}
 	];
 
@@ -78,16 +72,7 @@ define(function (require) {
 						color: '#89A54E'
 					}
 				}
-				}, {
-				gridLineColor: 'rgba(0,0,0,0.05)',
-				opposite: true,
-				title: {
-					text: 'Gas usage',
-					style: {
-						color: '#4572A7'
-					}
-				},
-			}],
+				}],
 			plotOptions:{
 				series:{
 					marker:{
@@ -104,8 +89,7 @@ define(function (require) {
 			"electra_import_low"	:0,
 			"electra_import_normal" :1,
 			"electra_export_low" 	:2,
-			"electra_export_normal" :3,
-			"gas_usage" 			:4,
+			"electra_export_normal" :3
 		};
 
 		_.each(result.series, function(serie){
@@ -114,7 +98,7 @@ define(function (require) {
 		});
 	};
 
-	var last_measurements = [0];
+	var last_measurements = [	];
 
 	var installLiveListener = function(){
 		var websocket = new WebSocket("ws://" + window.location.hostname + ":8081");
@@ -124,7 +108,7 @@ define(function (require) {
 
 			last_measurements.push(data.value);
 
-			if(last_measurements.length > 20){
+			if(last_measurements.length > 5){
 				last_measurements = _.rest(last_measurements,1);
 			}
 
