@@ -120,7 +120,7 @@ define(function (require) {
 		var websocket = new WebSocket("ws://" + window.location.hostname + ":8081");
 		websocket.onmessage = function(evt) {
 			var data = JSON.parse(evt.data);
-			$("current_power_consumption").text(data.value + "W");
+			$("#current_power_consumption").text(data.value + "W");
 
 			last_measurements.push(data.value);
 			last_measurements = _.take(last_measurements, 10);
