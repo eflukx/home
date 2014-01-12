@@ -17,25 +17,25 @@ define(function (require) {
 				name: 'verbruik laag tarief',
 				type: 'areaspline',
 				yAxis: 0,
-				data: _.find(result.series, function(serie){serie.measurement_type === "electra_import_low"}).data
+				data: _.find(result.series, function(serie){return serie.measurement_type === "electra_import_low"}).data
 			},
 			{
 				name: 'verbruik normaal tarief',
 				type: 'areaspline',
 				yAxis: 0,
-				data: _.find(result.series, function(serie){serie.measurement_type === "electra_import_normal"}).data
+				data: _.find(result.series, function(serie){return serie.measurement_type === "electra_import_normal"}).data
 			},
 			{
 				name: 'teruglevering laag tarief',
 				type: 'areaspline',
 				yAxis: 0,
-				data: _.find(result.series, function(serie){serie.measurement_type === "electra_export_low"}).data
+				data: _.find(result.series, function(serie){return serie.measurement_type === "electra_export_low"}).data
 			},
 			{
 				name: 'teruglevering normaal tarief',
 				type: 'areaspline',
 				yAxis: 0,
-				data: _.find(result.series, function(serie){serie.measurement_type === "electra_export_normal"}).data
+				data: _.find(result.series, function(serie){return serie.measurement_type === "electra_export_normal"}).data
 			}
 		];
 
