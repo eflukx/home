@@ -8,7 +8,7 @@ gem 'active_support'
 gem 'time_difference'
 gem 'eventmachine'
 gem 'trollop'
-gen 'i2c'
+gem 'i2c'
 
 group :development, :test do
 	gem 'rspec'
